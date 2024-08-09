@@ -1,6 +1,9 @@
 package com.bart.scorebetlive442.controller;
 
 import com.bart.scorebetlive442.model.User;
+import com.bart.scorebetlive442.model.json.UserCreateJson;
+import com.bart.scorebetlive442.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,13 +18,23 @@ import java.util.Map;
 public class UserController {
 
     private final Map<Integer, User> users = new HashMap<>();
+    private final UserService userService;
     private int currentUserId = 1;
 
+    @Autowired
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "/create")
-    public ResponseEntity<User> createUser(@RequestBody User user) {
-        user.setId(currentUserId++);
-        users.put(user.getId(), user);
-        return new ResponseEntity<>(user, HttpStatus.CREATED);
+    public ResponseEntity<User> createUser(@RequestBody UserCreateJson user) {
+        User u = mapFromUserCreateJson(user);
+        User savedUser = userService.addUser(u);
+
+        // USerResponseJson response = mapFromUserToUserJson(savedUser)
+
+        return new ResponseEntity<>(u, HttpStatus.CREATED);
     }
 
     @GetMapping(value = "/{id}")
@@ -59,5 +72,14 @@ public class UserController {
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
+
+    private User mapFromUserCreateJson(UserCreateJson userCreateJson) {
+        User user = new User();
+        user.setUsername(userCreateJson.username());
+        user.setPassword(userCreateJson.password());
+        user.setEmail(userCreateJson.email());
+        user.setCountry(userCreateJson.country());;
+        return user;
     }
 }
