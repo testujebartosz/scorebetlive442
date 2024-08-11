@@ -1,19 +1,19 @@
 package com.bart.scorebetlive442.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Score {
 
-    private String teamA;
-    private String teamB;
+    private Team teamA;
+    private Team teamB;
     private int scoreA;
     private int scoreB;
 
-    public Score(String teamA, int scoreA, int scoreB, String teamB) {
-        this.teamA = teamA;
-        this.scoreA = scoreA;
-        this.teamB = teamB;
-        this.scoreB = scoreB;
-    }
 }
