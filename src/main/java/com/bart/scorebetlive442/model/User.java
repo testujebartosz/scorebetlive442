@@ -18,5 +18,5 @@ public class User {
     private String email;
     private String dateOfBirth;
     private String country;
-    private int id;
+    private Long id;
 }
