@@ -2,6 +2,7 @@ package com.bart.scorebetlive442.mapper;
 
 import com.bart.scorebetlive442.model.Score;
 import com.bart.scorebetlive442.model.json.ScoreCreateJson;
+import com.bart.scorebetlive442.model.json.ScoreResponseJson;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -14,5 +15,14 @@ public class ScoreMapper {
         score.setScoreA(scoreCreateJson.scoreA());
         score.setScoreB(scoreCreateJson.scoreB());
         return score;
+    }
+
+    public ScoreResponseJson convertScoreToJson(Score score) {
+        return new ScoreResponseJson(
+                score.getTeamA(),
+                score.getTeamB(),
+                score.getScoreA(),
+                score.getScoreB()
+        );
     }
 }

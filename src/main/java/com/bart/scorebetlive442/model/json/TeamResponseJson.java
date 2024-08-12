@@ -1,6 +1,6 @@
 package com.bart.scorebetlive442.model.json;
 
-public record TeamCreateJson(
+public record TeamResponseJson(
         String name,
         String city,
         String country,

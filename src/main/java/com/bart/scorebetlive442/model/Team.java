@@ -15,5 +15,5 @@ public class Team {
     private String city;
     private String country;
     private Long id;
-    private int foundedYear;
+    private String foundedYear;
 }

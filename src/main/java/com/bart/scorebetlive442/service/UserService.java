@@ -25,13 +25,6 @@ public class UserService {
         return DATA.get(id);
     }
 
-    public List<User> getUserByUsername(String username) {
-        return DATA.values()
-                .stream()
-                .filter(u -> u.getUsername().equals(username))
-                .collect(Collectors.toList());
-    }
-
     public List<User> getAllUsers() {
         return new ArrayList<>(DATA.values());
     }
