@@ -1,6 +1,6 @@
 package com.bart.scorebetlive442.model.json;
 
-public record UserCreateJson(
+public record UserResponseJson(
         String username,
         String password,
         String firstName,
@@ -11,4 +11,3 @@ public record UserCreateJson(
         Long id
 ) {
 }
-

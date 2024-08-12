@@ -2,6 +2,7 @@ package com.bart.scorebetlive442.mapper;
 
 import com.bart.scorebetlive442.model.Match;
 import com.bart.scorebetlive442.model.json.MatchCreateJson;
+import com.bart.scorebetlive442.model.json.MatchResponseJson;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -18,5 +19,18 @@ public class MatchMapper {
         match.setScoreHome(matchCreateJson.scoreHome());
         match.setScoreAway(matchCreateJson.scoreAway());
         return match;
+    }
+
+    public MatchResponseJson convertMatchToJson(Match match) {
+        return new MatchResponseJson(
+                match.getId(),
+                match.getTeamHome(),
+                match.getTeamAway(),
+                match.getDateTime(),
+                match.getStadiumName(),
+                match.getCity(),
+                match.getScoreHome(),
+                match.getScoreAway()
+        );
     }
 }

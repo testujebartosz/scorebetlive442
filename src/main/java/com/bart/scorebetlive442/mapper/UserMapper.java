@@ -2,6 +2,7 @@ package com.bart.scorebetlive442.mapper;
 
 import com.bart.scorebetlive442.model.User;
 import com.bart.scorebetlive442.model.json.UserCreateJson;
+import com.bart.scorebetlive442.model.json.UserResponseJson;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -17,5 +18,18 @@ public class UserMapper {
         user.setDateOfBirth(userCreateJson.dateOfBirth());
         user.setCountry(userCreateJson.country());;
         return user;
+    }
+
+    public UserResponseJson convertUserToJson(User user) {
+        return new UserResponseJson(
+                user.getUsername(),
+                user.getPassword(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getEmail(),
+                user.getDateOfBirth(),
+                user.getCountry(),
+                user.getId()
+        );
     }
 }

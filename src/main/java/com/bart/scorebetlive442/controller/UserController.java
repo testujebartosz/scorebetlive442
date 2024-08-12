@@ -3,14 +3,15 @@ package com.bart.scorebetlive442.controller;
 import com.bart.scorebetlive442.mapper.UserMapper;
 import com.bart.scorebetlive442.model.User;
 import com.bart.scorebetlive442.model.json.UserCreateJson;
+import com.bart.scorebetlive442.model.json.UserResponseJson;
 import com.bart.scorebetlive442.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(path = "/user")
@@ -26,33 +27,33 @@ public class UserController {
     }
 
     @PostMapping(value = "/create")
-    public ResponseEntity<User> createUser(@RequestBody UserCreateJson userCreateJson) {
+    public ResponseEntity<UserResponseJson> createUser(@RequestBody UserCreateJson userCreateJson) {
         User user = userMapper.convertJsonToUser(userCreateJson);
         User registeredUser = userService.registerUser(user);
-        return new ResponseEntity<>(registeredUser, HttpStatus.CREATED);
+        UserResponseJson userResponse = userMapper.convertUserToJson(registeredUser);
+        return new ResponseEntity<>(userResponse, HttpStatus.CREATED);
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<User> getUser(@PathVariable Long id) {
+    public ResponseEntity<UserResponseJson> getUser(@PathVariable Long id) {
         User user = userService.getUserById(id);
         if (user != null) {
-            return new ResponseEntity<>(user, HttpStatus.OK);
+            UserResponseJson userResponse = userMapper.convertUserToJson(user);
+            return new ResponseEntity<>(userResponse, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
     @GetMapping(value = "/all")
-    public ResponseEntity<List<User>> getAllUsers(@RequestParam(required = false) String username) {
-        List<User> existingUsers = new ArrayList<>();
+    public ResponseEntity<List<UserResponseJson>> getAllUsers(@RequestParam(required = false) String username) {
+        List<User> existingUsers = userService.getAllUsers();
+        List<UserResponseJson> userResponses = existingUsers.stream()
+                .filter(user -> username == null || username.isEmpty() || user.getUsername().equalsIgnoreCase(username))
+                .map(userMapper::convertUserToJson)
+                .collect(Collectors.toList());
 
-        if (username == null || username.isEmpty()) {
-            existingUsers.addAll(userService.getAllUsers());
-        } else {
-            existingUsers.addAll(userService.getUserByUsername(username));
-        }
-
-        return new ResponseEntity<>(existingUsers, HttpStatus.OK);
+        return new ResponseEntity<>(userResponses, HttpStatus.OK);
     }
 
     @DeleteMapping(value = "/remove/{id}")
