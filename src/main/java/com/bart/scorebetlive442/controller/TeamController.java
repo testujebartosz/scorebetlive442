@@ -21,7 +21,8 @@ public class TeamController {
     private final TeamMapper teamMapper;
 
     @Autowired
-    public TeamController(TeamService teamService, TeamMapper teamMapper) {
+    public TeamController(TeamService teamService,
+                          TeamMapper teamMapper) {
         this.teamService = teamService;
         this.teamMapper = teamMapper;
     }

@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -16,6 +15,11 @@ public class UserService {
     private Long currentUserId = 1L;
 
     public User registerUser(User user) {
+
+        if (user.getPassword().length() < 5) {
+            throw new RuntimeException("Za krotkie haslo");
+        }
+
         user.setId(currentUserId++);
         DATA.put(user.getId(), user);
         return user;
@@ -31,5 +35,18 @@ public class UserService {
 
     public User remove(Long id) {
         return DATA.remove(id);
+    }
+
+    public User updateUserById(Long id, User user) {
+        var userById = getUserById(id);
+
+        userById.setCountry(user.getCountry());
+        if (user.getPassword() != null) {
+            userById.setPassword(user.getPassword());
+        }
+
+//        DATA.put(user.getId(), userById);
+
+        return userById;
     }
 }

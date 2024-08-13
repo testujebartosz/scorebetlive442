@@ -66,4 +66,15 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
+    @PatchMapping(value = "/{id}")
+    public ResponseEntity<UserResponseJson> updateUser(@PathVariable Long id, @RequestBody UserCreateJson body) {
+        var user = userMapper.convertJsonToUser(body);
+
+        var returned = userService.updateUserById(id, user);
+
+        return new ResponseEntity<>(userMapper.convertUserToJson(returned), HttpStatus.OK);
+
+    }
+
 }
