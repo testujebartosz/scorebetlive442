@@ -1,30 +1,19 @@
 package com.bart.scorebetlive442.mapper;
 
+import com.bart.scorebetlive442.entity.BetEntity;
 import com.bart.scorebetlive442.model.Bet;
 import com.bart.scorebetlive442.model.json.BetCreateJson;
 import com.bart.scorebetlive442.model.json.BetResponseJson;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
 
-@Component
-public class BetMapper {
+@Mapper
+public interface BetMapper {
 
-    public Bet convertJsonToBet(BetCreateJson betCreateJson) {
-        Bet bet = new Bet();
-        bet.setTeamA(betCreateJson.teamA());
-        bet.setTeamB(betCreateJson.teamB());
-        bet.setOdds1(betCreateJson.odds1());
-        bet.setOdds2(betCreateJson.odds2());
-        bet.setOddsX(betCreateJson.oddsX());
-        return bet;
-    }
+    Bet convertJsonToBet(BetCreateJson betCreateJson);
 
-    public BetResponseJson convertBetToJson(Bet bet) {
-        return new BetResponseJson(
-                bet.getTeamA(),
-                bet.getTeamB(),
-                bet.getOdds1(),
-                bet.getOdds2(),
-                bet.getOddsX()
-        );
-    }
+    BetResponseJson convertBetToJson(Bet bet);
+
+    Bet toBetModel(BetEntity betEntity);
+
+    BetEntity toBetEntity(Bet bet);
 }

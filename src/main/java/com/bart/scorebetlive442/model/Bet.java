@@ -11,10 +11,10 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Bet {
 
-    private Team teamA;
-    private Team teamB;
+    private Long id;
+    private Team teamHome;
+    private Team teamAway;
     private double odds1;
     private double odds2;
     private double oddsX;
-
 }

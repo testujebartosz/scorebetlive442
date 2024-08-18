@@ -3,26 +3,19 @@ package com.bart.scorebetlive442.mapper;
 import com.bart.scorebetlive442.model.Score;
 import com.bart.scorebetlive442.model.json.ScoreCreateJson;
 import com.bart.scorebetlive442.model.json.ScoreResponseJson;
+import com.bart.scorebetlive442.repository.ScoreEntity;
+import org.mapstruct.Mapper;
 import org.springframework.stereotype.Component;
 
-@Component
-public class ScoreMapper {
+@Mapper
+public interface ScoreMapper {
 
-    public Score convertJsonToScore(ScoreCreateJson scoreCreateJson) {
-        Score score = new Score();
-        score.setTeamA(scoreCreateJson.teamA());
-        score.setTeamB(scoreCreateJson.teamB());
-        score.setScoreA(scoreCreateJson.scoreA());
-        score.setScoreB(scoreCreateJson.scoreB());
-        return score;
-    }
+    Score convertJsonToScore(ScoreCreateJson scoreCreateJson);
 
-    public ScoreResponseJson convertScoreToJson(Score score) {
-        return new ScoreResponseJson(
-                score.getTeamA(),
-                score.getTeamB(),
-                score.getScoreA(),
-                score.getScoreB()
-        );
-    }
+    ScoreResponseJson convertScoreToJson(Score score);
+
+    Score toScoreModel(ScoreEntity scoreEntity);
+
+    ScoreEntity toScoreEntity(Score score);
+
 }
