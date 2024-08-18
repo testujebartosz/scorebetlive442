@@ -5,7 +5,6 @@ import com.bart.scorebetlive442.model.json.ScoreCreateJson;
 import com.bart.scorebetlive442.model.json.ScoreResponseJson;
 import com.bart.scorebetlive442.repository.ScoreEntity;
 import org.mapstruct.Mapper;
-import org.springframework.stereotype.Component;
 
 @Mapper
 public interface ScoreMapper {

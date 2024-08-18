@@ -16,8 +16,6 @@ public class MatchService {
     private final MatchRepository matchRepository;
     private final MatchMapper matchMapper;
 
-    private final List<Match> matchesList = new ArrayList<>();
-
     public MatchService(MatchRepository matchRepository, MatchMapper matchMapper) {
         this.matchRepository = matchRepository;
         this.matchMapper = matchMapper;
