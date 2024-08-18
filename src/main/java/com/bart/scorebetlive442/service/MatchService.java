@@ -1,37 +1,54 @@
 package com.bart.scorebetlive442.service;
 
+import com.bart.scorebetlive442.entity.MatchEntity;
+import com.bart.scorebetlive442.mapper.MatchMapper;
 import com.bart.scorebetlive442.model.Match;
+import com.bart.scorebetlive442.repository.MatchRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class MatchService {
 
+    private final MatchRepository matchRepository;
+    private final MatchMapper matchMapper;
+
     private final List<Match> matchesList = new ArrayList<>();
-    private Long currentMatchId = 1L;
+
+    public MatchService(MatchRepository matchRepository, MatchMapper matchMapper) {
+        this.matchRepository = matchRepository;
+        this.matchMapper = matchMapper;
+    }
 
     public Match createMatch(Match match) {
-        match.setId(currentMatchId++);
-        matchesList.add(match);
-        return match;
+        MatchEntity toSave = matchMapper.toMatchEntity(match);
+        MatchEntity saved = matchRepository.save(toSave);
+
+        return matchMapper.toMatchModel(saved);
     }
 
     public Match getMatch(Long id) {
-        for (Match match : matchesList) {
-            if (match.getId().equals(id)) {
-                return match;
-            }
-        }
-        return null;
+      return matchRepository.findById(id)
+              .map(matchMapper::toMatchModel)
+              .orElse(null);
     }
 
     public List<Match> getAllMatches() {
-        return matchesList;
+        return matchRepository.findAll()
+                .stream()
+                .map(matchMapper::toMatchModel)
+                .collect(Collectors.toList());
+
     }
 
     public boolean removeMatchById(Long id) {
-        return matchesList.removeIf(match -> match.getId().equals(id));
+        if(matchRepository.existsById(id)) {
+            matchRepository.deleteById(id);
+            return true;
+        } else
+            return false;
     }
 }

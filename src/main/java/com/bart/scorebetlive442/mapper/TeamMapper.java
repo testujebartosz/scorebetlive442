@@ -1,29 +1,20 @@
 package com.bart.scorebetlive442.mapper;
 
+import com.bart.scorebetlive442.entity.TeamEntity;
 import com.bart.scorebetlive442.model.Team;
 import com.bart.scorebetlive442.model.json.TeamCreateJson;
 import com.bart.scorebetlive442.model.json.TeamResponseJson;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
 
-@Component
-public class TeamMapper {
+@Mapper
+public interface TeamMapper {
 
-    public Team convertJsonToTeam(TeamCreateJson teamCreateJson) {
-        Team team = new Team();
-        team.setName(teamCreateJson.name());
-        team.setCity(teamCreateJson.city());
-        team.setCountry(teamCreateJson.country());
-        team.setFoundedYear(teamCreateJson.foundedYear());
-        return team;
-    }
+    Team convertJsonToTeam(TeamCreateJson teamCreateJson);
 
-    public TeamResponseJson convertTeamToJson(Team team) {
-        return new TeamResponseJson(
-                team.getName(),
-                team.getCity(),
-                team.getCountry(),
-                team.getId(),
-                team.getFoundedYear()
-        );
-    }
+    TeamResponseJson convertTeamToJson(Team team);
+
+    Team toTeamModel(TeamEntity teamEntity);
+
+    TeamEntity toEntity(Team team);
 }
+

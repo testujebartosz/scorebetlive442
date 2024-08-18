@@ -11,9 +11,10 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Score {
 
-    private Team teamA;
-    private Team teamB;
-    private int scoreA;
-    private int scoreB;
+    private Long id;
+    private Team teamHome;
+    private Team teamAway;
+    private int scoreHome;
+    private int scoreAway;
 
 }

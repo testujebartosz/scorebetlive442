@@ -1,35 +1,51 @@
 package com.bart.scorebetlive442.service;
 
+import com.bart.scorebetlive442.entity.UserEntity;
+import com.bart.scorebetlive442.mapper.UserMapper;
 import com.bart.scorebetlive442.model.User;
+import com.bart.scorebetlive442.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
 public class UserService {
 
-    private final Map<Long, User> DATA = new HashMap<>();
-    private Long currentUserId = 1L;
+    private final UserRepository userRepository;
+    private final UserMapper userMapper;
+
+    public UserService(UserRepository userRepository, UserMapper userMapper) {
+        this.userRepository = userRepository;
+        this.userMapper = userMapper;
+    }
 
     public User registerUser(User user) {
-        user.setId(currentUserId++);
-        DATA.put(user.getId(), user);
-        return user;
+        UserEntity toSave = userMapper.toEntity(user);
+        UserEntity saved = userRepository.save(toSave);
+
+        return userMapper.toUserModel(saved);
     }
 
     public User getUserById(Long id) {
-        return DATA.get(id);
+        return userRepository.findById(id)
+                .map(userMapper::toUserModel)
+                .orElse(null);
     }
 
     public List<User> getAllUsers() {
-        return new ArrayList<>(DATA.values());
+        return userRepository.findAll()
+                .stream()
+                .map(userMapper::toUserModel)
+                .collect(Collectors.toList());
     }
 
-    public User remove(Long id) {
-        return DATA.remove(id);
+    public boolean removeUserById(Long id) {
+        if (userRepository.existsById(id)) {
+            userRepository.deleteById(id);
+            return true;
+        } else {
+            return false;
+        }
     }
 }

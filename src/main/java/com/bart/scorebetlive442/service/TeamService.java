@@ -1,38 +1,50 @@
 package com.bart.scorebetlive442.service;
 
+import com.bart.scorebetlive442.entity.TeamEntity;
+import com.bart.scorebetlive442.mapper.TeamMapper;
 import com.bart.scorebetlive442.model.Team;
+import com.bart.scorebetlive442.repository.TeamRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class TeamService {
 
-    private final List<Team> teams = new ArrayList<>();
-    private Long currentTeamId = 1L;
+    private final TeamRepository teamRepository;
+    private final TeamMapper teamMapper;
+
+    public TeamService(TeamRepository teamRepository, TeamMapper teamMapper) {
+        this.teamRepository = teamRepository;
+        this.teamMapper = teamMapper;
+    }
 
     public Team createTeam(Team team) {
-        team.setId(currentTeamId++);
-        teams.add(team);
-        return team;
+        TeamEntity toSave = teamMapper.toEntity(team);
+        TeamEntity saved = teamRepository.save(toSave);
+
+        return teamMapper.toTeamModel(saved);
     }
 
     public Team getTeamById(Long id) {
-        for (Team team : teams) {
-            if (team.getId().equals(id)) {
-                return team;
-            }
-        }
-        return null;
+       return teamRepository.findById(id)
+               .map(teamMapper::toTeamModel)
+               .orElse(null);
     }
 
     public List<Team> getAllTeams() {
-        return new ArrayList<>(teams);
+        return teamRepository.findAll()
+                .stream()
+                .map(teamMapper::toTeamModel)
+                .collect(Collectors.toList());
     }
 
     public boolean removeTeamById(Long id) {
-        return teams.removeIf(team -> Objects.equals(team.getId(), id));
+        if (teamRepository.existsById(id)) {
+            teamRepository.deleteById(id);
+            return true;
+        } else
+            return false;
     }
 }

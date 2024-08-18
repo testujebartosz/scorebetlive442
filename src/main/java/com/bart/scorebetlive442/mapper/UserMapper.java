@@ -1,35 +1,19 @@
 package com.bart.scorebetlive442.mapper;
 
+import com.bart.scorebetlive442.entity.UserEntity;
 import com.bart.scorebetlive442.model.User;
 import com.bart.scorebetlive442.model.json.UserCreateJson;
 import com.bart.scorebetlive442.model.json.UserResponseJson;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
 
-@Component
-public class UserMapper {
+@Mapper
+public interface UserMapper {
 
-    public User convertJsonToUser(UserCreateJson userCreateJson) {
-        User user = new User();
-        user.setUsername(userCreateJson.username());
-        user.setPassword(userCreateJson.password());
-        user.setFirstName(userCreateJson.firstName());
-        user.setLastName(userCreateJson.lastName());
-        user.setEmail(userCreateJson.email());
-        user.setDateOfBirth(userCreateJson.dateOfBirth());
-        user.setCountry(userCreateJson.country());;
-        return user;
-    }
+    User convertJsonToUser(UserCreateJson userCreateJson);
 
-    public UserResponseJson convertUserToJson(User user) {
-        return new UserResponseJson(
-                user.getUsername(),
-                user.getPassword(),
-                user.getFirstName(),
-                user.getLastName(),
-                user.getEmail(),
-                user.getDateOfBirth(),
-                user.getCountry(),
-                user.getId()
-        );
-    }
+    UserResponseJson convertUserToJson(User user);
+
+    User toUserModel(UserEntity userEntity);
+
+    UserEntity toEntity(User user);
 }
