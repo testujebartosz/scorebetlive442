@@ -16,7 +16,6 @@ import java.util.Objects;
 @Entity
 @Table(name = "Teams", indexes =
 @Index(name = "nameIdx", columnList = "name", unique = true))
-
 public class TeamEntity {
 
     @Id

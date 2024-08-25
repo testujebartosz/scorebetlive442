@@ -5,6 +5,7 @@ import com.bart.scorebetlive442.model.Match;
 import com.bart.scorebetlive442.model.json.MatchCreateJson;
 import com.bart.scorebetlive442.model.json.MatchResponseJson;
 import com.bart.scorebetlive442.service.MatchService;
+import com.bart.scorebetlive442.service.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,13 +22,14 @@ public class MatchController {
     private final MatchMapper matchMapper;
 
     @Autowired
-    public MatchController(MatchService matchService, MatchMapper matchMapper) {
+    public MatchController(MatchService matchService, MatchMapper matchMapper, TeamService teamService) {
         this.matchService = matchService;
         this.matchMapper = matchMapper;
     }
 
     @PostMapping(value = "/create")
     public ResponseEntity<MatchResponseJson> createTeam(@RequestBody MatchCreateJson matchCreateJson) {
+
         Match match = matchMapper.convertJsonToMatch(matchCreateJson);
         Match createdMatch = matchService.createMatch(match);
         MatchResponseJson matchResponse = matchMapper.convertMatchToJson(createdMatch);
@@ -69,5 +71,12 @@ public class MatchController {
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
+
+    @PatchMapping(value = "/update/{id}")
+    public ResponseEntity<MatchResponseJson> updateTeam(@PathVariable Long id, @RequestBody MatchCreateJson bodyMatch) {
+        Match match = matchMapper.convertJsonToMatch(bodyMatch);
+        Match updatedMatch = matchService.updateMatch(id, match);
+        return new ResponseEntity<>(matchMapper.convertMatchToJson(updatedMatch), HttpStatus.OK);
     }
 }

@@ -19,6 +19,6 @@ public class Match {
     private Date dateTime;
     private String stadiumName;
     private String city;
-    private int scoreHome;
-    private int scoreAway;
+    private Integer scoreHome;
+    private Integer scoreAway;
 }
