@@ -21,18 +21,27 @@ public class MatchEntity {
     @Column(nullable = false, updatable = false)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "team_home_id", nullable = false)
     private TeamEntity teamHome;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "team_away_id", nullable = false)
     private TeamEntity teamAway;
 
+    @Column(nullable = false)
     private Date dateTime;
+
+    @Column(nullable = false)
     private String stadiumName;
+
+    @Column(nullable = false)
     private String city;
-    private int scoreHome;
-    private int scoreAway;
+
+    @Column(nullable = false)
+    private Integer scoreHome;
+
+    @Column(nullable = false)
+    private Integer scoreAway;
 
 }

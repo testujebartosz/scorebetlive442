@@ -5,7 +5,6 @@ import com.bart.scorebetlive442.model.Match;
 import com.bart.scorebetlive442.model.json.MatchCreateJson;
 import com.bart.scorebetlive442.model.json.MatchResponseJson;
 import org.mapstruct.Mapper;
-import org.springframework.stereotype.Component;
 
 @Mapper
 public interface MatchMapper {

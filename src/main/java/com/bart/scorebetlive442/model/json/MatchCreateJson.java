@@ -11,7 +11,7 @@ public record MatchCreateJson(
         Date dateTime,
         String stadiumName,
         String city,
-        int scoreHome,
-        int scoreAway
+        Integer scoreHome,
+        Integer scoreAway
 ) {
 }
