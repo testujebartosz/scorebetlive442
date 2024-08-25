@@ -1,6 +1,5 @@
-package com.bart.scorebetlive442.repository;
+package com.bart.scorebetlive442.entity;
 
-import com.bart.scorebetlive442.entity.TeamEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

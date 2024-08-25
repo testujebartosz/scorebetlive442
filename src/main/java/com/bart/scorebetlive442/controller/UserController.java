@@ -69,7 +69,7 @@ public class UserController {
 
     @PatchMapping(value = "/update/{id}")
     public ResponseEntity<UserResponseJson> updateUser(@PathVariable Long id, @RequestBody UserCreateJson bodyUser) {
-        var user = userMapper.convertJsonToUser(bodyUser);
+        User user = userMapper.convertJsonToUser(bodyUser);
         User updatedUser = userService.updateUserById(id, user);
         return new ResponseEntity<>(userMapper.convertUserToJson(updatedUser), HttpStatus.OK);
     }
