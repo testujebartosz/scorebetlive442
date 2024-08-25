@@ -4,6 +4,7 @@ import com.bart.scorebetlive442.entity.TeamEntity;
 import com.bart.scorebetlive442.mapper.TeamMapper;
 import com.bart.scorebetlive442.model.Team;
 import com.bart.scorebetlive442.repository.TeamRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -46,5 +47,19 @@ public class TeamService {
             return true;
         } else
             return false;
+    }
+
+    public Team updateTeamById(Long id, Team team) {
+        TeamEntity teamById = teamRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Team with id" + id + "not found"));
+
+        if(team.getCity() != null) teamById.setCity(team.getCity());
+        if(team.getName() != null) teamById.setName(team.getName());
+        if(team.getCountry() != null) teamById.setCountry(team.getCountry());
+        if(team.getFoundedYear() != null) teamById.setFoundedYear(team.getFoundedYear());
+
+        teamRepository.save(teamById);
+
+        return teamMapper.toTeamModel(teamById);
     }
 }

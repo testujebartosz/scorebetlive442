@@ -68,4 +68,11 @@ public class TeamController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
+    @PatchMapping(value = "update/{id}")
+    public ResponseEntity<TeamResponseJson> updateTeam(@PathVariable Long id, @RequestBody TeamCreateJson bodyTeam ) {
+        Team team = teamMapper.convertJsonToTeam(bodyTeam);
+        Team updatedTeam = teamService.updateTeamById(id, team);
+        return new ResponseEntity<>(teamMapper.convertTeamToJson(updatedTeam), HttpStatus.OK);
+    }
 }
