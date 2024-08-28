@@ -61,22 +61,10 @@ public class MatchService {
         MatchEntity matchById = matchRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Match with id " + id + "not found"));
 
-        if(match.getCity() !=null) matchById.setCity(match.getCity());
-        if(match.getStadiumName() !=null) matchById.setStadiumName(match.getStadiumName());
-        if(match.getScoreHome() !=null) matchById.setScoreHome(match.getScoreHome());
-        if(match.getScoreAway() !=null) matchById.setScoreAway(match.getScoreAway());
-        if(match.getDateTime() !=null) matchById.setDateTime(match.getDateTime());
-        if(match.getTeamAway() !=null) {
-            TeamEntity teamAwayEntity = teamMapper.toEntity(match.getTeamAway());
-            matchById.setTeamAway(teamAwayEntity);
-        }
-        if(match.getTeamHome() !=null) {
-            TeamEntity teamHomeEntity = teamMapper.toEntity(match.getTeamHome());
-            matchById.setTeamHome(teamHomeEntity);
-        }
+        matchMapper.updateMatchFromDto(match, matchById);
 
-        matchRepository.save(matchById);
+        MatchEntity updatedMatchEntity = matchRepository.save(matchById);
 
-        return matchMapper.toMatchModel(matchById);
+        return matchMapper.toMatchModel(updatedMatchEntity);
     }
 }

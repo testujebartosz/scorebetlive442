@@ -5,6 +5,7 @@ import com.bart.scorebetlive442.model.Match;
 import com.bart.scorebetlive442.model.json.MatchCreateJson;
 import com.bart.scorebetlive442.model.json.MatchResponseJson;
 import org.mapstruct.Mapper;
+import org.mapstruct.MappingTarget;
 
 @Mapper
 public interface MatchMapper {
@@ -16,4 +17,6 @@ public interface MatchMapper {
     Match toMatchModel(MatchEntity matchEntity);
 
     MatchEntity toMatchEntity(Match match);
+
+    void updateMatchFromDto(Match source, @MappingTarget MatchEntity target);
 }
