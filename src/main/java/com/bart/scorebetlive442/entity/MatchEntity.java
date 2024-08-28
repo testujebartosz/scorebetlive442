@@ -13,7 +13,7 @@ import java.util.Date;
 @ToString
 @RequiredArgsConstructor
 @Entity
-@Table(name = "Match")
+@Table(name = "match")
 public class MatchEntity {
 
     @Id
@@ -38,10 +38,6 @@ public class MatchEntity {
     @Column(nullable = false)
     private String city;
 
-    @Column(nullable = false)
     private Integer scoreHome;
-
-    @Column(nullable = false)
     private Integer scoreAway;
-
 }
