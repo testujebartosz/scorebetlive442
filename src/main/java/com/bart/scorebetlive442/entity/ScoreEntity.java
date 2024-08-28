@@ -11,7 +11,7 @@ import lombok.ToString;
 @ToString
 @RequiredArgsConstructor
 @Entity
-@Table(name = "Score")
+@Table(name = "score")
 public class ScoreEntity {
 
     @Id

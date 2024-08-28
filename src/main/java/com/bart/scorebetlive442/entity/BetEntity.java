@@ -13,7 +13,7 @@ import lombok.ToString;
 @ToString
 @RequiredArgsConstructor
 @Entity
-@Table(name = "Bet")
+@Table(name = "bet")
 public class BetEntity {
 
     @Id

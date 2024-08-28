@@ -22,7 +22,7 @@ public class MatchController {
     private final MatchMapper matchMapper;
 
     @Autowired
-    public MatchController(MatchService matchService, MatchMapper matchMapper, TeamService teamService) {
+    public MatchController(MatchService matchService, MatchMapper matchMapper) {
         this.matchService = matchService;
         this.matchMapper = matchMapper;
     }

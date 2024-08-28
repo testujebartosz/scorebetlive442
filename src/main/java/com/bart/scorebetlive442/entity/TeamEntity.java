@@ -14,7 +14,7 @@ import java.util.Objects;
 @ToString
 @RequiredArgsConstructor
 @Entity
-@Table(name = "Teams", indexes =
+@Table(name = "team", indexes =
 @Index(name = "nameIdx", columnList = "name", unique = true))
 public class TeamEntity {
 
