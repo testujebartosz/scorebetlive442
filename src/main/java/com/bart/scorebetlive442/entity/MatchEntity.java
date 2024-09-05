@@ -38,6 +38,7 @@ public class MatchEntity {
     @Column(nullable = false)
     private String city;
 
-    private Integer scoreHome;
-    private Integer scoreAway;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "score_id")
+    private ScoreEntity score;
 }

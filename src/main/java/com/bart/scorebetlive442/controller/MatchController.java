@@ -5,7 +5,6 @@ import com.bart.scorebetlive442.model.Match;
 import com.bart.scorebetlive442.model.json.MatchCreateJson;
 import com.bart.scorebetlive442.model.json.MatchResponseJson;
 import com.bart.scorebetlive442.service.MatchService;
-import com.bart.scorebetlive442.service.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

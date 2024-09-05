@@ -35,6 +35,10 @@ public class TeamEntity {
     @Column(nullable = false)
     private String foundedYear;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "league_id")
+    private LeagueEntity league;
+
     @Override
     public final boolean equals(Object o) {
         if (this == o) return true;
