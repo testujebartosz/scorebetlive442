@@ -5,16 +5,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Set;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Team {
+public class League {
 
-    private String name;
-    private String city;
-    private String country;
     private Long id;
-    private String foundedYear;
-    private League league;
+    private String name;
+    private String country;
+    private Set<Team> teams;
+    private String level;
 }

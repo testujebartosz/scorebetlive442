@@ -19,13 +19,10 @@ public class MatchService {
 
     private final MatchRepository matchRepository;
     private final MatchMapper matchMapper;
-    private final TeamMapper teamMapper;
 
-    public MatchService(MatchRepository matchRepository, MatchMapper matchMapper, TeamMapper teamMapper) {
+    public MatchService(MatchRepository matchRepository, MatchMapper matchMapper) {
         this.matchRepository = matchRepository;
         this.matchMapper = matchMapper;
-        this.teamMapper = teamMapper;
-
     }
 
     public Match createMatch(Match match) {

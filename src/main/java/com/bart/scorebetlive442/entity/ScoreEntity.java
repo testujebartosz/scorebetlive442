@@ -19,14 +19,9 @@ public class ScoreEntity {
     @Column(nullable = false, updatable = false)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "team_home_id", nullable = false)
-    private TeamEntity teamHome;
+    private Integer scoreHome;
+    private Integer scoreAway;
 
-    @ManyToOne
-    @JoinColumn(name = "team_away_id", nullable = false)
-    private TeamEntity teamAway;
-
-    private int scoreHome;
-    private int scoreAway;
+    @OneToOne(mappedBy = "score", fetch = FetchType.LAZY)
+    private MatchEntity match;
 }

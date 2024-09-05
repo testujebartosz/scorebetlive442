@@ -12,9 +12,7 @@ import lombok.Setter;
 public class Score {
 
     private Long id;
-    private Team teamHome;
-    private Team teamAway;
-    private int scoreHome;
-    private int scoreAway;
+    private Integer scoreHome;
+    private Integer scoreAway;
 
 }
