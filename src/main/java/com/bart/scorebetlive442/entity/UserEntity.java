@@ -14,7 +14,7 @@ import java.util.Objects;
 @ToString
 @RequiredArgsConstructor
 @Entity
-@Table(name = "user", indexes =
+@Table(name = "users", indexes =
 @Index(name = "usernameIdx", columnList = "username", unique = true))
 
 public class UserEntity {
