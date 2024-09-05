@@ -1,16 +1,12 @@
 package com.bart.scorebetlive442.service;
 
 import com.bart.scorebetlive442.entity.MatchEntity;
-import com.bart.scorebetlive442.entity.TeamEntity;
 import com.bart.scorebetlive442.mapper.MatchMapper;
-import com.bart.scorebetlive442.mapper.TeamMapper;
 import com.bart.scorebetlive442.model.Match;
 import com.bart.scorebetlive442.repository.MatchRepository;
-import com.bart.scorebetlive442.repository.TeamRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
