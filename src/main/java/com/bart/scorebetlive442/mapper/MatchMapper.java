@@ -4,8 +4,7 @@ import com.bart.scorebetlive442.entity.MatchEntity;
 import com.bart.scorebetlive442.model.Match;
 import com.bart.scorebetlive442.model.json.MatchCreateJson;
 import com.bart.scorebetlive442.model.json.MatchResponseJson;
-import org.mapstruct.Mapper;
-import org.mapstruct.MappingTarget;
+import org.mapstruct.*;
 
 @Mapper
 public interface MatchMapper {
@@ -18,5 +17,8 @@ public interface MatchMapper {
 
     MatchEntity toMatchEntity(Match match);
 
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "id", ignore = true)
     void updateMatchFromDto(Match source, @MappingTarget MatchEntity target);
+
 }
