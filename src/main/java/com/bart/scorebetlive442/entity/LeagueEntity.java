@@ -1,11 +1,13 @@
 package com.bart.scorebetlive442.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -27,8 +29,8 @@ public class LeagueEntity {
     @Column(nullable = false)
     private String country;
 
-    @OneToMany(mappedBy = "league", cascade = CascadeType.ALL)
-    private Set<TeamEntity> teams;
+    @OneToMany(mappedBy = "league", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<TeamEntity> teams = new HashSet<>();
 
     @Column(nullable = false)
     private String level;

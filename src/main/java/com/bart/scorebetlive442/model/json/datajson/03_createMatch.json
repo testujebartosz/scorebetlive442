@@ -1,0 +1,21 @@
+{
+  "teamHome": {
+    "id": 1,
+    "name": "FC Juventus",
+    "city": "Turin",
+    "country": "Italy",
+    "foundedYear": "1902"
+  },
+  "teamAway": {
+    "id": 2,
+    "name": "FC Barcelona",
+    "city": "Barcelona",
+    "country": "Spain",
+    "foundedYear": "1902"
+  },
+  "dateTime": "1993-02-03T00:00:00",
+  "stadiumName": "Allianz",
+  "city": "Turin",
+  "scoreHome": 2,
+  "scoreAway": 3
+}
