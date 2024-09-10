@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(path = "/matches")
+@RequestMapping(path = "/match")
 public class MatchController {
 
     private final MatchService matchService;

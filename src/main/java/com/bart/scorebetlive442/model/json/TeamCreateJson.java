@@ -4,7 +4,6 @@ public record TeamCreateJson(
         String name,
         String city,
         String country,
-        Long id,
         String foundedYear
 ) {
 }

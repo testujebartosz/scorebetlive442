@@ -34,6 +34,11 @@ public class TeamService {
                .orElse(null);
     }
 
+    public TeamEntity findTeamEntityById(Long id) {
+        return teamRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Team not found with ID: " + id));
+    }
+
     public List<Team> getAllTeams() {
         return teamRepository.findAll()
                 .stream()

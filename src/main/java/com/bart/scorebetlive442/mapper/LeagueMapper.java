@@ -13,7 +13,7 @@ public interface  LeagueMapper {
 
     LeagueResponseJson convertLeagueToJson(League league);
 
-    League toLeagueEntity(LeagueEntity leagueEntity);
+    League toLeagueModel(LeagueEntity leagueEntity);
 
     LeagueEntity toLeagueEntity(League league);
 }
