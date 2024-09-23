@@ -20,6 +20,7 @@ public class LeagueService {
     private final LeagueRepository leagueRepository;
     private final LeagueMapper leagueMapper;
     private final Validator validator;
+
     public LeagueService(LeagueRepository leagueRepository, LeagueMapper leagueMapper, Validator validator) {
         this.leagueRepository = leagueRepository;
         this.leagueMapper = leagueMapper;
@@ -30,7 +31,7 @@ public class LeagueService {
         var validate = validator.validate(league, League.Group.Create.class, Default.class);
         if (!validate.isEmpty()) {
             System.out.println(validate);
-            throw new RuntimeException("xxxx");
+            throw new RuntimeException("Validation failed");
         }
 //        Set<TeamEntity> teams = league.getTeams()
 //                .stream()
@@ -64,6 +65,12 @@ public class LeagueService {
     public League updateLeague(Long id, League league) {
         LeagueEntity existingLeagueEntity = leagueRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("League not found"));
+
+        var validate = validator.validate(league, League.Group.Update.class, Default.class);
+        if (!validate.isEmpty()) {
+            System.out.println(validate);
+            throw new RuntimeException("xxxx");
+        }
 
         leagueMapper.updateLeagueFromDto(league, existingLeagueEntity);
 
