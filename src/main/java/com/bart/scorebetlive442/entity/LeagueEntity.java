@@ -29,10 +29,6 @@ public class LeagueEntity {
     @Column(nullable = false)
     private String country;
 
-    @OneToMany(mappedBy = "league", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<TeamEntity> teams = new HashSet<>();
-
-    @Column(nullable = false)
-    private String level;
-
+    // @OneToMany(mappedBy = "league", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    // private Set<TeamEntity> teams = new HashSet<>();
 }
