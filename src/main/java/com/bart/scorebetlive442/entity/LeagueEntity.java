@@ -1,14 +1,10 @@
 package com.bart.scorebetlive442.entity;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-
-import java.util.HashSet;
-import java.util.Set;
 
 @Getter
 @Setter
