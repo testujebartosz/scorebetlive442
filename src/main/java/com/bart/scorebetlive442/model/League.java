@@ -14,7 +14,7 @@ import org.hibernate.validator.constraints.Length;
 @NoArgsConstructor
 public class League {
 
-    @Null(groups = Group.Create.class)
+    @Null(groups = {Group.Create.class, Group.Update.class})
     private Long id;
     @Length(min = 5, max = 50)
     private String name;
@@ -23,5 +23,6 @@ public class League {
 
     public static class Group {
         public interface Create {}
+        public interface Update {}
     }
 }
