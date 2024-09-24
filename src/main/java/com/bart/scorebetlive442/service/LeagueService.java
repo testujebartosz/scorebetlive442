@@ -69,12 +69,12 @@ public class LeagueService {
         var validate = validator.validate(league, League.Group.Update.class, Default.class);
         if (!validate.isEmpty()) {
             System.out.println(validate);
-            throw new RuntimeException("xxxx");
+            throw new RuntimeException("Validation failed");
         }
 
         leagueMapper.updateLeagueFromDto(league, existingLeagueEntity);
-
         LeagueEntity updatedLeagueEntity = leagueRepository.save(existingLeagueEntity);
+
         return leagueMapper.toLeagueModel(updatedLeagueEntity);
     }
 }
