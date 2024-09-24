@@ -2,16 +2,15 @@ package com.bart.scorebetlive442.mapper;
 
 import com.bart.scorebetlive442.entity.MatchEntity;
 import com.bart.scorebetlive442.model.Match;
-import com.bart.scorebetlive442.model.json.MatchCreateJson;
-import com.bart.scorebetlive442.model.json.MatchResponseJson;
+import com.bart.scorebetlive442.model.json.MatchJson;
 import org.mapstruct.*;
 
 @Mapper
 public interface MatchMapper {
 
-    Match convertJsonToMatch(MatchCreateJson matchCreateJson);
+    Match convertJsonToMatch(MatchJson matchJson);
 
-    MatchResponseJson convertMatchToJson(Match match);
+    MatchJson convertMatchToJson(Match match);
 
     Match toMatchModel(MatchEntity matchEntity);
 
