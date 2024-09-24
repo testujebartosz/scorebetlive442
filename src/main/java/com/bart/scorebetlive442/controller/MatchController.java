@@ -2,8 +2,6 @@ package com.bart.scorebetlive442.controller;
 
 import com.bart.scorebetlive442.mapper.MatchMapper;
 import com.bart.scorebetlive442.model.Match;
-import com.bart.scorebetlive442.model.json.MatchCreateJson;
-import com.bart.scorebetlive442.model.json.MatchResponseJson;
 import com.bart.scorebetlive442.service.MatchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
