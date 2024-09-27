@@ -2,9 +2,11 @@ package com.bart.scorebetlive442.controller;
 
 import com.bart.scorebetlive442.mapper.LeagueMapper;
 import com.bart.scorebetlive442.model.League;
+import com.bart.scorebetlive442.model.json.AddTeamToLeagueJson;
 import com.bart.scorebetlive442.model.json.LeagueJson;
 import com.bart.scorebetlive442.service.LeagueService;
 import com.fasterxml.jackson.annotation.JsonView;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -58,6 +60,14 @@ public class LeagueController {
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
+
+    @PostMapping(value = "/addTeam")
+    public ResponseEntity<?> addTeam(@RequestParam Long leagueId,
+                                     @RequestBody @Valid AddTeamToLeagueJson addTeamToLeagueJson) {
+        leagueService.addTeamToLeague(leagueId, addTeamToLeagueJson.teams());
+
+        return ResponseEntity.ok().build();
     }
 
 

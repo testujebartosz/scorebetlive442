@@ -6,6 +6,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 @Getter
 @Setter
 @ToString
@@ -25,6 +28,10 @@ public class LeagueEntity {
     @Column(nullable = false)
     private String country;
 
-    // @OneToMany(mappedBy = "league", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    // private Set<TeamEntity> teams = new HashSet<>();
+    @ToString.Exclude
+//    @OneToMany
+//    @JoinColumn(name = "league_id")
+    @OneToMany(mappedBy = "leagueEntity", orphanRemoval = true)
+    private Set<TeamEntity> teams = new LinkedHashSet<>();
+
 }
