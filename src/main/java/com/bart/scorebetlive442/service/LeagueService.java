@@ -1,17 +1,21 @@
 package com.bart.scorebetlive442.service;
 
 import com.bart.scorebetlive442.entity.LeagueEntity;
+import com.bart.scorebetlive442.entity.TeamEntity;
 import com.bart.scorebetlive442.mapper.LeagueMapper;
 import com.bart.scorebetlive442.model.League;
 import com.bart.scorebetlive442.repository.LeagueRepository;
+import com.bart.scorebetlive442.repository.TeamRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Validator;
 import jakarta.validation.groups.Default;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 
 @Service
@@ -20,11 +24,16 @@ public class LeagueService {
     private final LeagueRepository leagueRepository;
     private final LeagueMapper leagueMapper;
     private final Validator validator;
+    private final TeamRepository teamRepository;
 
-    public LeagueService(LeagueRepository leagueRepository, LeagueMapper leagueMapper, Validator validator) {
+    public LeagueService(LeagueRepository leagueRepository,
+                         LeagueMapper leagueMapper,
+                         Validator validator,
+                         TeamRepository teamRepository) {
         this.leagueRepository = leagueRepository;
         this.leagueMapper = leagueMapper;
         this.validator = validator;
+        this.teamRepository = teamRepository;
     }
     //    @Transactional
     public League createLeague(League league) {
@@ -76,5 +85,33 @@ public class LeagueService {
         LeagueEntity updatedLeagueEntity = leagueRepository.save(existingLeagueEntity);
 
         return leagueMapper.toLeagueModel(updatedLeagueEntity);
+    }
+
+    // praca domowa: usuwanie z ligi, jako metoda delete
+    // wspolna metoda do dodawania i usuwania
+
+    public void addTeamToLeague(Long leagueId, Set<Long> teamIds) {
+
+        var existingLeagueOpt = leagueRepository.findById(leagueId);
+
+        if (existingLeagueOpt.isEmpty()) {
+            throw new RuntimeException("nie-ma-ligi");
+        }
+
+        List<TeamEntity> teamsToAdd = new ArrayList<>();
+
+        var allById = teamRepository.findAllById(teamIds);
+
+        if (allById.size() != teamIds.size()) {
+            // praca domowa: jak sprawdzic której drużyny nie ma
+            throw new RuntimeException("nie ma druzyny");
+        }
+
+        var existingLeague = existingLeagueOpt.get();
+//        existingLeague.getTeams().addAll(teamsToAdd);
+        allById.forEach(team -> team.setLeagueEntity(existingLeague));
+
+//        leagueRepository.save(existingLeague);
+        teamRepository.saveAll(teamsToAdd);
     }
 }
