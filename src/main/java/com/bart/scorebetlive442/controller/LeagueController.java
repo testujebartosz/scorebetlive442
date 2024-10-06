@@ -69,6 +69,4 @@ public class LeagueController {
 
         return ResponseEntity.ok().build();
     }
-
-
 }
