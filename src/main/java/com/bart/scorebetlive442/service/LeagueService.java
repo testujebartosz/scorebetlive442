@@ -12,10 +12,8 @@ import jakarta.validation.groups.Default;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -95,23 +93,87 @@ public class LeagueService {
         var existingLeagueOpt = leagueRepository.findById(leagueId);
 
         if (existingLeagueOpt.isEmpty()) {
-            throw new RuntimeException("nie-ma-ligi");
+            throw new RuntimeException("No such league");
         }
 
-        List<TeamEntity> teamsToAdd = new ArrayList<>();
+        List<TeamEntity> foundTeamsById= teamRepository.findAllById(teamIds);
 
-        var allById = teamRepository.findAllById(teamIds);
+        Set<Long> foundTeamsIds = foundTeamsById
+                .stream()
+                .map(TeamEntity::getId)
+                .collect(Collectors.toSet());
+        Set<Long> missingTeamIds = new HashSet<>(teamIds);;
+        missingTeamIds.removeAll(foundTeamsIds);
 
-        if (allById.size() != teamIds.size()) {
-            // praca domowa: jak sprawdzic której drużyny nie ma
-            throw new RuntimeException("nie ma druzyny");
+        if (!missingTeamIds.isEmpty()) {
+            throw new RuntimeException("Teams not found" + missingTeamIds);
         }
 
         var existingLeague = existingLeagueOpt.get();
 //        existingLeague.getTeams().addAll(teamsToAdd);
-        allById.forEach(team -> team.setLeagueEntity(existingLeague));
+        foundTeamsById.forEach(team -> team.setLeagueEntity(existingLeague));
 
 //        leagueRepository.save(existingLeague);
-        teamRepository.saveAll(teamsToAdd);
+        teamRepository.saveAll(foundTeamsById);
+    }
+
+    public void deleteTeamFromLeague(Long leagueId, Set<Long> teamIds) {
+
+        var existingLeagueById = leagueRepository.findById(leagueId);
+
+        if (existingLeagueById.isEmpty()) {
+            throw new RuntimeException("No such league");
+        }
+
+        List<TeamEntity> teamsToRemove = teamRepository.findAllById(teamIds);
+
+        if (teamsToRemove.size() != teamIds.size()) {
+            Set<Long> foundTeamIds = teamsToRemove.stream()
+                    .map(TeamEntity::getId)
+                    .collect(Collectors.toSet());
+
+            Set<Long> missingTeamIds = new HashSet<>(teamIds);
+            missingTeamIds.removeAll(foundTeamIds);
+
+            throw new RuntimeException("Not found a team with id: " + missingTeamIds);
+        }
+
+        teamsToRemove.forEach(team -> {
+            if (team.getLeagueEntity() != null && team.getLeagueEntity().getId().equals(leagueId)) {
+                team.setLeagueEntity(null);
+            }
+        });
+
+        teamRepository.saveAll(teamsToRemove);
+    }
+
+    public void modifyTeamsInLeague(Long leagueId, Set<Long> teamIds, String action) {
+        var existingLeagueOpt = leagueRepository.findById(leagueId);
+        if (existingLeagueOpt.isEmpty()) {
+            throw new RuntimeException("No such league");
+        }
+
+        List<TeamEntity> teams = teamRepository.findAllById(teamIds);
+
+        if (teams.size() != teamIds.size()) {
+            Set<Long> foundTeamIds = teams.stream()
+                    .map(TeamEntity::getId)
+                    .collect(Collectors.toSet());
+            Set<Long> missingTeamIds = new HashSet<>(teamIds);
+            missingTeamIds.removeAll(foundTeamIds);
+            throw new RuntimeException("Not found a team with id: " + missingTeamIds);
+        }
+
+        if ("ADD".equalsIgnoreCase(action)) {
+            teams.forEach(team -> team.setLeagueEntity(existingLeagueOpt.get()));
+            teamRepository.saveAll(teams);
+        } else if ("REMOVE".equalsIgnoreCase(action)) {
+            teams.forEach(team -> {
+                if (team.getLeagueEntity() != null && team.getLeagueEntity().getId().equals(leagueId)) {
+                    team.setLeagueEntity(null);
+                }
+            });
+            teamRepository.saveAll(teams);
+        }
     }
 }
