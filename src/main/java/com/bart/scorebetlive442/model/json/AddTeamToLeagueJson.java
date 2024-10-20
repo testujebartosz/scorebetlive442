@@ -5,5 +5,5 @@ import jakarta.validation.constraints.NotEmpty;
 import java.util.Set;
 
 public record AddTeamToLeagueJson(
-    @NotEmpty Set<Long> teams) {
+        @NotEmpty Set<Long> teams) {
 }

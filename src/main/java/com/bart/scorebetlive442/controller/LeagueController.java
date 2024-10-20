@@ -63,10 +63,33 @@ public class LeagueController {
     }
 
     @PostMapping(value = "/addTeam")
-    public ResponseEntity<?> addTeam(@RequestParam Long leagueId,
-                                     @RequestBody @Valid AddTeamToLeagueJson addTeamToLeagueJson) {
+    public ResponseEntity<?> addTeamToLeague(@RequestParam Long leagueId,
+                                             @RequestBody @Valid AddTeamToLeagueJson addTeamToLeagueJson) {
         leagueService.addTeamToLeague(leagueId, addTeamToLeagueJson.teams());
+        return ResponseEntity.ok().build();
+    }
 
+    @DeleteMapping(value = "/deleteTeam")
+    public ResponseEntity<Void> deleteTeamFromLeague(@RequestParam Long leagueId,
+                                                     @RequestBody @Valid AddTeamToLeagueJson teamIds) {
+        leagueService.deleteTeamFromLeague(leagueId, teamIds.teams());
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping(value = "/modifyTeams")
+    public ResponseEntity<Void> modifyTeamsInLeague(@RequestParam Long leagueId,
+                                                    @RequestParam String action,
+                                                    @RequestBody @Valid AddTeamToLeagueJson addTeamToLeagueJson) {
+        switch (action.toUpperCase()) {
+            case "ADD":
+                leagueService.modifyTeamsInLeague(leagueId, addTeamToLeagueJson.teams(), "ADD");
+                break;
+            case "REMOVE":
+                leagueService.modifyTeamsInLeague(leagueId, addTeamToLeagueJson.teams(), "REMOVE");
+                break;
+            default:
+                return ResponseEntity.badRequest().body(null);
+        }
         return ResponseEntity.ok().build();
     }
 }
