@@ -2,9 +2,12 @@ package com.bart.scorebetlive442.service;
 
 import com.bart.scorebetlive442.entity.TeamEntity;
 import com.bart.scorebetlive442.mapper.TeamMapper;
+import com.bart.scorebetlive442.model.Match;
 import com.bart.scorebetlive442.model.Team;
 import com.bart.scorebetlive442.repository.TeamRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Validator;
+import jakarta.validation.groups.Default;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,13 +18,22 @@ public class TeamService {
 
     private final TeamRepository teamRepository;
     private final TeamMapper teamMapper;
-    public TeamService(TeamRepository teamRepository, TeamMapper teamMapper) {
+    private final Validator validator;
+
+    public TeamService(TeamRepository teamRepository, TeamMapper teamMapper, Validator validator) {
         this.teamRepository = teamRepository;
         this.teamMapper = teamMapper;
+        this.validator = validator;
     }
 
     public Team createTeam(Team team) {
-        TeamEntity toSave = teamMapper.toEntity(team);
+        var validate = validator.validate(team, Team.Group.Create.class, Default.class);
+        if (!validate.isEmpty()) {
+            System.out.println(validate);
+            throw new RuntimeException("Validation failed");
+        }
+
+        TeamEntity toSave = teamMapper.toTeamEntity(team);
         TeamEntity saved = teamRepository.save(toSave);
 
         return teamMapper.toTeamModel(saved);
@@ -57,13 +69,15 @@ public class TeamService {
         TeamEntity teamById = teamRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Team with id" + id + "not found"));
 
-        if(team.getCity() != null) teamById.setCity(team.getCity());
-        if(team.getName() != null) teamById.setName(team.getName());
-        if(team.getCountry() != null) teamById.setCountry(team.getCountry());
-        if(team.getFoundedYear() != null) teamById.setFoundedYear(team.getFoundedYear());
+        var validate = validator.validate(team, Team.Group.Update.class, Default.class);
+        if (!validate.isEmpty()) {
+            System.out.println(validate);
+            throw new RuntimeException("Validation failed");
+        }
 
-        teamRepository.save(teamById);
+        teamMapper.updateTeamFromDto(team, teamById);
+        TeamEntity updatedTeamEntity = teamRepository.save(teamById);
 
-        return teamMapper.toTeamModel(teamById);
+        return teamMapper.toTeamModel(updatedTeamEntity);
     }
 }

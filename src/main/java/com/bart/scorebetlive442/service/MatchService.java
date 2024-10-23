@@ -2,7 +2,6 @@ package com.bart.scorebetlive442.service;
 
 import com.bart.scorebetlive442.entity.MatchEntity;
 import com.bart.scorebetlive442.mapper.MatchMapper;
-import com.bart.scorebetlive442.model.League;
 import com.bart.scorebetlive442.model.Match;
 import com.bart.scorebetlive442.repository.MatchRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -66,7 +65,7 @@ public class MatchService {
         MatchEntity matchById = matchRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Match with id " + id + "not found"));
 
-        var validate = validator.validate(match, Match.Group.Create.class, Default.class);
+        var validate = validator.validate(match, Match.Group.Update.class, Default.class);
         if (!validate.isEmpty()) {
             System.out.println(validate);
             throw new RuntimeException("Validation failed");

@@ -50,7 +50,7 @@ public class MatchController {
     }
 
     @GetMapping(value = "/all")
-    @JsonView(LeagueJson.View.GetResponse.class)
+    @JsonView(MatchJson.View.GetResponse.class)
     public ResponseEntity<List<MatchJson>> getAllMatches() {
         List<Match> allMatches = matchService.getAllMatches();
 
