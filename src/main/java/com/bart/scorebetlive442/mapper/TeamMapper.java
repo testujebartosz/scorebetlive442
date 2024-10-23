@@ -2,19 +2,22 @@ package com.bart.scorebetlive442.mapper;
 
 import com.bart.scorebetlive442.entity.TeamEntity;
 import com.bart.scorebetlive442.model.Team;
-import com.bart.scorebetlive442.model.json.TeamCreateJson;
-import com.bart.scorebetlive442.model.json.TeamResponseJson;
-import org.mapstruct.Mapper;
+import com.bart.scorebetlive442.model.json.TeamJson;
+import org.mapstruct.*;
 
 @Mapper
 public interface TeamMapper {
 
-    Team convertJsonToTeam(TeamCreateJson teamCreateJson);
+    Team convertJsonToTeam(TeamJson teamJson);
 
-    TeamResponseJson convertTeamToJson(Team team);
+    TeamJson convertTeamToJson(Team team);
 
     Team toTeamModel(TeamEntity teamEntity);
 
-    TeamEntity toEntity(Team team);
+    TeamEntity toTeamEntity(Team team);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "id", ignore = true)
+    void updateTeamFromDto(Team source, @MappingTarget TeamEntity target);
 }
 

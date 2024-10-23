@@ -2,9 +2,9 @@ package com.bart.scorebetlive442.controller;
 
 import com.bart.scorebetlive442.mapper.TeamMapper;
 import com.bart.scorebetlive442.model.Team;
-import com.bart.scorebetlive442.model.json.TeamCreateJson;
-import com.bart.scorebetlive442.model.json.TeamResponseJson;
+import com.bart.scorebetlive442.model.json.TeamJson;
 import com.bart.scorebetlive442.service.TeamService;
+import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,32 +26,33 @@ public class TeamController {
         this.teamMapper = teamMapper;
     }
 
-    @PostMapping(value = "/create")
-    public ResponseEntity<TeamResponseJson> createTeam(@RequestBody TeamCreateJson teamCreateJson) {
-        Team team = teamMapper.convertJsonToTeam(teamCreateJson);
-        Team createdTeam = teamService.createTeam(team);
-        TeamResponseJson teamResponse = teamMapper.convertTeamToJson(createdTeam);
-        return new ResponseEntity<>(teamResponse, HttpStatus.CREATED);
+    @PostMapping
+    @JsonView(TeamJson.View.CreateResponse.class)
+    public ResponseEntity<TeamJson> createTeam(@RequestBody @JsonView(TeamJson.View.CreateRequest.class)
+                                               TeamJson teamJson) {
+        Team createdTeam = teamService.createTeam(teamMapper.convertJsonToTeam(teamJson));
+        return new ResponseEntity<>(teamMapper.convertTeamToJson(createdTeam), HttpStatus.CREATED);
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<TeamResponseJson> getTeam(@PathVariable(name = "id") Long teamId) {
+    @JsonView(TeamJson.View.GetResponse.class)
+    public ResponseEntity<TeamJson> getTeam(@PathVariable(name = "id") Long teamId) {
         Team team = teamService.getTeamById(teamId);
         if (team != null) {
-            TeamResponseJson teamResponse = teamMapper.convertTeamToJson(team);
-            return new ResponseEntity<>(teamResponse, HttpStatus.OK);
+            return new ResponseEntity<>(teamMapper.convertTeamToJson(team), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
     @GetMapping(value = "/all")
-    public ResponseEntity<List<TeamResponseJson>> getAllTeams(
+    @JsonView(TeamJson.View.GetResponse.class)
+    public ResponseEntity<List<TeamJson>> getAllTeams(
             @RequestHeader(value = "X-User-Agent") String userAgent,
             @RequestParam(value = "country", required = false) String country) {
 
         List<Team> allTeams = teamService.getAllTeams();
-        List<TeamResponseJson> teamResponse = allTeams.stream()
+        List<TeamJson> teamResponse = allTeams.stream()
                 .filter(team -> country == null || country.isEmpty() || team.getCountry().equalsIgnoreCase(country))
                 .map(teamMapper::convertTeamToJson)
                 .collect(Collectors.toList());
@@ -59,7 +60,7 @@ public class TeamController {
         return new ResponseEntity<>(teamResponse, HttpStatus.OK);
     }
 
-    @DeleteMapping(value = "/remove/{id}")
+    @DeleteMapping(value = "/{id}")
     public ResponseEntity<Void> deleteTeam(@PathVariable Long id) {
         boolean isTeamRemoved = teamService.removeTeamById(id);
         if (isTeamRemoved) {
@@ -69,10 +70,11 @@ public class TeamController {
         }
     }
 
-    @PatchMapping(value = "update/{id}")
-    public ResponseEntity<TeamResponseJson> updateTeam(@PathVariable Long id, @RequestBody TeamCreateJson bodyTeam ) {
-        Team team = teamMapper.convertJsonToTeam(bodyTeam);
-        Team updatedTeam = teamService.updateTeamById(id, team);
+    @PatchMapping(value = "{id}")
+    @JsonView(TeamJson.View.GetResponse.class)
+    public ResponseEntity<TeamJson> updateTeam(@PathVariable Long id, @RequestBody @JsonView(TeamJson.View.CreateRequest.class)
+    TeamJson teamJson) {
+        Team updatedTeam = teamService.updateTeamById(id, teamMapper.convertJsonToTeam(teamJson));
         return new ResponseEntity<>(teamMapper.convertTeamToJson(updatedTeam), HttpStatus.OK);
     }
 }
