@@ -7,4 +7,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface TeamRepository extends JpaRepository<TeamEntity, Long> {
     TeamEntity findByCountryIgnoreCase(String country);
+
+    //@Query("select ...")
+
+
+    // eager
 }

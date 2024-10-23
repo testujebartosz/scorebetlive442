@@ -7,8 +7,8 @@ import org.mapstruct.*;
 
 import java.util.List;
 
-@Mapper
-public interface  LeagueMapper {
+@Mapper(uses = {TeamMapper.class})
+public interface LeagueMapper {
 
     League convertJsonToLeague(LeagueJson leagueJson);
 

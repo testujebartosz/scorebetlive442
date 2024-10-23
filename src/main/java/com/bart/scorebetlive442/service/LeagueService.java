@@ -12,7 +12,10 @@ import jakarta.validation.groups.Default;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 
@@ -52,6 +55,7 @@ public class LeagueService {
     public List<League> getAllLeagues() {
         return leagueRepository.findAll().stream().map(leagueMapper::toLeagueModel).toList();
     }
+
     public List<League> getLeagueBy(Optional<String> name, Optional<String> country) {
         LeagueEntity leagueEntity = new LeagueEntity();
         name.ifPresent(leagueEntity::setName);
@@ -96,24 +100,27 @@ public class LeagueService {
             throw new RuntimeException("No such league");
         }
 
-        List<TeamEntity> foundTeamsById= teamRepository.findAllById(teamIds);
+        // league(1) -- teamy(2,3,4) -> 2,3,4 [OK]
+        // league(1,2) -- teamy(2,3,4) -> 3,4 [NOK]
 
-        Set<Long> foundTeamsIds = foundTeamsById
+        List<TeamEntity> foundTeamsById = teamRepository.findAllById(teamIds);
+
+        if (foundTeamsById.size() != teamIds.size()) {
+            Set<Long> foundTeamsIds = foundTeamsById
                 .stream()
                 .map(TeamEntity::getId)
                 .collect(Collectors.toSet());
-        Set<Long> missingTeamIds = new HashSet<>(teamIds);;
-        missingTeamIds.removeAll(foundTeamsIds);
+            Set<Long> missingTeamIds = new HashSet<>(teamIds);
+            missingTeamIds.removeAll(foundTeamsIds);
 
-        if (!missingTeamIds.isEmpty()) {
             throw new RuntimeException("Teams not found" + missingTeamIds);
         }
 
-        var existingLeague = existingLeagueOpt.get();
-//        existingLeague.getTeams().addAll(teamsToAdd);
-        foundTeamsById.forEach(team -> team.setLeagueEntity(existingLeague));
+        // walidacja czy dana drużyna jest już przypięta jak jest to zwrtoka
 
-//        leagueRepository.save(existingLeague);
+        var existingLeague = existingLeagueOpt.get();
+
+        foundTeamsById.forEach(team -> team.setLeagueEntity(existingLeague));
         teamRepository.saveAll(foundTeamsById);
     }
 
