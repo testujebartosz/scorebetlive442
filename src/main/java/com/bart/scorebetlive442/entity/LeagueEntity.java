@@ -31,7 +31,7 @@ public class LeagueEntity {
     @ToString.Exclude
 //    @OneToMany
 //    @JoinColumn(name = "league_id")
-    @OneToMany(mappedBy = "leagueEntity", orphanRemoval = true)
+    @OneToMany(mappedBy = "leagueEntity", orphanRemoval = true, fetch = FetchType.EAGER)
     private Set<TeamEntity> teams = new LinkedHashSet<>();
 
 }

@@ -4,6 +4,7 @@ import com.bart.scorebetlive442.mapper.LeagueMapper;
 import com.bart.scorebetlive442.model.League;
 import com.bart.scorebetlive442.model.json.AddTeamToLeagueJson;
 import com.bart.scorebetlive442.model.json.LeagueJson;
+import com.bart.scorebetlive442.model.json.ModifyTeamsInLeagueAction;
 import com.bart.scorebetlive442.service.LeagueService;
 import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.validation.Valid;
@@ -77,19 +78,12 @@ public class LeagueController {
     }
 
     @PatchMapping(value = "/modifyTeams")
-    public ResponseEntity<Void> modifyTeamsInLeague(@RequestParam Long leagueId,
-                                                    @RequestParam String action,
-                                                    @RequestBody @Valid AddTeamToLeagueJson addTeamToLeagueJson) {
-        switch (action.toUpperCase()) {
-            case "ADD":
-                leagueService.modifyTeamsInLeague(leagueId, addTeamToLeagueJson.teams(), "ADD");
-                break;
-            case "REMOVE":
-                leagueService.modifyTeamsInLeague(leagueId, addTeamToLeagueJson.teams(), "REMOVE");
-                break;
-            default:
-                return ResponseEntity.badRequest().body(null);
-        }
-        return ResponseEntity.ok().build();
+    public ResponseEntity<?> modifyTeamsInLeague(@RequestParam Long leagueId,
+                                                 @RequestParam ModifyTeamsInLeagueAction action,
+                                                 @RequestBody @Valid AddTeamToLeagueJson addTeamToLeagueJson) {
+        return switch (action) {
+            case ADD -> addTeamToLeague(leagueId, addTeamToLeagueJson);
+            case REMOVE -> deleteTeamFromLeague(leagueId, addTeamToLeagueJson);
+        };
     }
 }

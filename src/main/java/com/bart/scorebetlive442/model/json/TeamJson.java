@@ -21,6 +21,6 @@ public record TeamJson(
     public record View() {
         public record CreateRequest() {}
         public record CreateResponse() {}
-        public record GetResponse() {}
+        public static class GetResponse {}
     }
 }
