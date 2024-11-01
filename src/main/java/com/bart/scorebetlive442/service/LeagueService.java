@@ -33,6 +33,7 @@ public class LeagueService {
         this.validator = validator;
         this.teamRepository = teamRepository;
     }
+
     //    @Transactional
     public League createLeague(League league) {
         var validate = validator.validate(league, League.Group.Create.class, Default.class);
@@ -49,9 +50,11 @@ public class LeagueService {
         LeagueEntity saved = leagueRepository.save(leagueEntity);
         return leagueMapper.toLeagueModel(saved);
     }
+
     public List<League> getAllLeagues() {
         return leagueRepository.findAll().stream().map(leagueMapper::toLeagueModel).toList();
     }
+
     public List<League> getLeagueBy(Optional<String> name, Optional<String> country) {
         LeagueEntity leagueEntity = new LeagueEntity();
         name.ifPresent(leagueEntity::setName);
@@ -85,9 +88,6 @@ public class LeagueService {
         return leagueMapper.toLeagueModel(updatedLeagueEntity);
     }
 
-    // praca domowa: usuwanie z ligi, jako metoda delete
-    // wspolna metoda do dodawania i usuwania
-
     public void addTeamToLeague(Long leagueId, Set<Long> teamIds) {
 
         var existingLeagueOpt = leagueRepository.findById(leagueId);
@@ -96,24 +96,21 @@ public class LeagueService {
             throw new RuntimeException("No such league");
         }
 
-        List<TeamEntity> foundTeamsById= teamRepository.findAllById(teamIds);
+        List<TeamEntity> foundTeamsById = teamRepository.findAllById(teamIds);
+        if (foundTeamsById.size() != teamIds.size()) {
+            Set<Long> foundTeamsIds = foundTeamsById
+                    .stream()
+                    .map(TeamEntity::getId)
+                    .collect(Collectors.toSet());
+            Set<Long> missingTeamIds = new HashSet<>(teamIds);
+            missingTeamIds.removeAll(foundTeamsIds);
 
-        Set<Long> foundTeamsIds = foundTeamsById
-                .stream()
-                .map(TeamEntity::getId)
-                .collect(Collectors.toSet());
-        Set<Long> missingTeamIds = new HashSet<>(teamIds);;
-        missingTeamIds.removeAll(foundTeamsIds);
-
-        if (!missingTeamIds.isEmpty()) {
             throw new RuntimeException("Teams not found" + missingTeamIds);
         }
-
+        // walidacja czy dana drużyna jest już przypięta jak jest to zwrtoka
         var existingLeague = existingLeagueOpt.get();
 //        existingLeague.getTeams().addAll(teamsToAdd);
         foundTeamsById.forEach(team -> team.setLeagueEntity(existingLeague));
-
-//        leagueRepository.save(existingLeague);
         teamRepository.saveAll(foundTeamsById);
     }
 
@@ -145,35 +142,5 @@ public class LeagueService {
         });
 
         teamRepository.saveAll(teamsToRemove);
-    }
-
-    public void modifyTeamsInLeague(Long leagueId, Set<Long> teamIds, String action) {
-        var existingLeagueOpt = leagueRepository.findById(leagueId);
-        if (existingLeagueOpt.isEmpty()) {
-            throw new RuntimeException("No such league");
-        }
-
-        List<TeamEntity> teams = teamRepository.findAllById(teamIds);
-
-        if (teams.size() != teamIds.size()) {
-            Set<Long> foundTeamIds = teams.stream()
-                    .map(TeamEntity::getId)
-                    .collect(Collectors.toSet());
-            Set<Long> missingTeamIds = new HashSet<>(teamIds);
-            missingTeamIds.removeAll(foundTeamIds);
-            throw new RuntimeException("Not found a team with id: " + missingTeamIds);
-        }
-
-        if ("ADD".equalsIgnoreCase(action)) {
-            teams.forEach(team -> team.setLeagueEntity(existingLeagueOpt.get()));
-            teamRepository.saveAll(teams);
-        } else if ("REMOVE".equalsIgnoreCase(action)) {
-            teams.forEach(team -> {
-                if (team.getLeagueEntity() != null && team.getLeagueEntity().getId().equals(leagueId)) {
-                    team.setLeagueEntity(null);
-                }
-            });
-            teamRepository.saveAll(teams);
-        }
     }
 }

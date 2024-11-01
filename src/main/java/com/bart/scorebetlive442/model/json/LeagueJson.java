@@ -2,6 +2,8 @@ package com.bart.scorebetlive442.model.json;
 
 import com.fasterxml.jackson.annotation.JsonView;
 
+import java.util.Set;
+
 import static com.bart.scorebetlive442.model.json.LeagueJson.View.*;
 
 public record LeagueJson(
@@ -10,15 +12,15 @@ public record LeagueJson(
         @JsonView({CreateRequest.class, GetResponse.class})
         String name,
         @JsonView({CreateRequest.class, GetResponse.class})
-        String country
-
-        //Set<Long> teamIds
+        String country,
+        @JsonView({GetResponse.class})
+        Set<Long> teamIds
 
 ) {
 
     public record View() {
         public record CreateRequest() {}
         public record CreateResponse() {}
-        public record GetResponse() {}
+        public static class GetResponse extends TeamJson.View.GetResponse {}
     }
 }
