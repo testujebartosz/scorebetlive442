@@ -14,7 +14,7 @@ public record LeagueJson(
         @JsonView({CreateRequest.class, GetResponse.class})
         String country,
         @JsonView({GetResponse.class})
-        Set<Long> teamIds
+        Set<TeamJson> teamDetails
 
 ) {
 

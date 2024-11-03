@@ -12,6 +12,7 @@ public interface LeagueMapper {
 
     League convertJsonToLeague(LeagueJson leagueJson);
 
+    @Mapping(target = "teamDetails", source = "teams")
     LeagueJson convertLeagueToJson(League league);
 
     List<LeagueJson> convertLeagueToJson(List<League> leagues);
@@ -21,6 +22,7 @@ public interface LeagueMapper {
     List<League> toLeagueModel(List<LeagueEntity> leagueEntities);
 
     LeagueEntity toLeagueEntity(League league);
+
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
