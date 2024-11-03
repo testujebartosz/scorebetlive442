@@ -126,7 +126,7 @@ public class LeagueService {
 
     public void deleteTeamFromLeague(Long leagueId, Set<Long> teamIds) {
         // Sprawdzenie, czy liga istnieje
-        LeagueEntity existingLeague = leagueRepository.findById(leagueId)
+        leagueRepository.findById(leagueId)
                 .orElseThrow(() -> {
                     log.error("No such league with ID: {}", leagueId);
                     return new RuntimeException("No such league");
