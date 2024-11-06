@@ -6,14 +6,19 @@ import com.bart.scorebetlive442.mapper.LeagueMapper;
 import com.bart.scorebetlive442.model.League;
 import com.bart.scorebetlive442.repository.LeagueRepository;
 import com.bart.scorebetlive442.repository.TeamRepository;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Validator;
 import jakarta.validation.groups.Default;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Example;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -24,15 +29,20 @@ public class LeagueService {
     private final LeagueMapper leagueMapper;
     private final Validator validator;
     private final TeamRepository teamRepository;
+    private final EntityManager entityManager;
+    private final JdbcTemplate jdbcTemplate;
 
     public LeagueService(LeagueRepository leagueRepository,
                          LeagueMapper leagueMapper,
                          Validator validator,
-                         TeamRepository teamRepository) {
+                         TeamRepository teamRepository,
+                         EntityManager entityManager, JdbcTemplate jdbcTemplate) {
         this.leagueRepository = leagueRepository;
         this.leagueMapper = leagueMapper;
         this.validator = validator;
         this.teamRepository = teamRepository;
+        this.entityManager = entityManager;
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     //    @Transactional
@@ -53,12 +63,29 @@ public class LeagueService {
     }
 
     public League getLeagueById(Long id) {
-        return leagueRepository.findById(id)
+        return leagueRepository.getByIdEager(id)
                 .map(leagueMapper::toLeagueModel)
                 .orElseThrow(() -> {
             log.error("No such league with ID: {}", id);
             return new RuntimeException("No such league");
         });
+    }
+
+    public League getLeagueByIdShort(Long id) {
+        var byId = leagueRepository.findById(id).get();
+        entityManager.detach(byId);
+
+        return Optional.of(byId)
+            .map(leagueMapper::toLeagueModel)
+            .orElseThrow(() -> {
+                log.error("No such league with ID: {}", id);
+                return new RuntimeException("No such league");
+            });
+    }
+
+
+    public void lekcja() {
+        leagueRepository.findAllByCountry("Poland");
     }
 
     public List<League> getLeagueBy(Optional<String> name, Optional<String> country) {

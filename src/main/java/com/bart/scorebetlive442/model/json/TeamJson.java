@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonView;
 import static com.bart.scorebetlive442.model.json.TeamJson.View.*;
 
 public record TeamJson(
-
         @JsonView({CreateResponse.class, GetResponse.class})
         Long id,
         @JsonView({CreateRequest.class, GetResponse.class})

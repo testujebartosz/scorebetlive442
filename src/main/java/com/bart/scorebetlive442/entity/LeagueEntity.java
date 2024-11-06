@@ -16,7 +16,6 @@ import java.util.Set;
 @Entity
 @Table(name = "league")
 public class LeagueEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, updatable = false)
@@ -31,7 +30,7 @@ public class LeagueEntity {
     @ToString.Exclude
 //    @OneToMany
 //    @JoinColumn(name = "league_id")
-    @OneToMany(mappedBy = "leagueEntity", orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "leagueEntity", orphanRemoval = true)
     private Set<TeamEntity> teams = new LinkedHashSet<>();
 
 }
