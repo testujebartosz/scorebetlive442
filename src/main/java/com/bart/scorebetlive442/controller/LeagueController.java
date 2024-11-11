@@ -45,6 +45,14 @@ public class LeagueController {
                 country)), HttpStatus.OK);
     }
 
+    @GetMapping("/{id}")
+    @JsonView(LeagueJson.View.GetResponse.class)
+    public ResponseEntity<LeagueJson> getLeagueById(@PathVariable Long id) {
+        League league = leagueService.getLeagueById(id);
+        LeagueJson leagueJson = leagueMapper.convertLeagueToJson(league);
+        return new ResponseEntity<>(leagueJson, HttpStatus.OK);
+    }
+
     @PatchMapping(value = "/{id}")
     @JsonView(LeagueJson.View.GetResponse.class)
     public ResponseEntity<LeagueJson> updateLeague(@PathVariable("id") Long id, @RequestBody @JsonView(LeagueJson.View.CreateRequest.class)

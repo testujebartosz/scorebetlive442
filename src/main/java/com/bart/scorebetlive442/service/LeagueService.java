@@ -9,13 +9,14 @@ import com.bart.scorebetlive442.repository.TeamRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Validator;
 import jakarta.validation.groups.Default;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-
+@Slf4j
 @Service
 public class LeagueService {
 
@@ -51,8 +52,13 @@ public class LeagueService {
         return leagueMapper.toLeagueModel(saved);
     }
 
-    public List<League> getAllLeagues() {
-        return leagueRepository.findAll().stream().map(leagueMapper::toLeagueModel).toList();
+    public League getLeagueById(Long id) {
+        return leagueRepository.findById(id)
+                .map(leagueMapper::toLeagueModel)
+                .orElseThrow(() -> {
+            log.error("No such league with ID: {}", id);
+            return new RuntimeException("No such league");
+        });
     }
 
     public List<League> getLeagueBy(Optional<String> name, Optional<String> country) {
@@ -89,14 +95,17 @@ public class LeagueService {
     }
 
     public void addTeamToLeague(Long leagueId, Set<Long> teamIds) {
+        //sprawdzenie czy liga istnieje
+        LeagueEntity existingLeague = leagueRepository.findById(leagueId)
+                .orElseThrow(() -> {
+                    log.error("No such league with ID: {}", leagueId);
+                    return new RuntimeException("No such league");
+                });
 
-        var existingLeagueOpt = leagueRepository.findById(leagueId);
+        // Pobranie drużyn po ich identyfikatorach, które nie są przypisane do tej ligi
+        List<TeamEntity> foundTeamsById = teamRepository.findTeamsByIdsAndNotInLeague(teamIds, leagueId);
 
-        if (existingLeagueOpt.isEmpty()) {
-            throw new RuntimeException("No such league");
-        }
-
-        List<TeamEntity> foundTeamsById = teamRepository.findAllById(teamIds);
+        // Sprawdzenie, czy wszystkie drużyny zostały znalezione
         if (foundTeamsById.size() != teamIds.size()) {
             Set<Long> foundTeamsIds = foundTeamsById
                     .stream()
@@ -105,42 +114,41 @@ public class LeagueService {
             Set<Long> missingTeamIds = new HashSet<>(teamIds);
             missingTeamIds.removeAll(foundTeamsIds);
 
-            throw new RuntimeException("Teams not found" + missingTeamIds);
+            log.error("Teams not found or already assigned: {}", missingTeamIds);
+            throw new RuntimeException("Teams not found or already assigned: " + missingTeamIds);
         }
-        // walidacja czy dana drużyna jest już przypięta jak jest to zwrtoka
-        var existingLeague = existingLeagueOpt.get();
-//        existingLeague.getTeams().addAll(teamsToAdd);
+
+        // Przypisanie drużyn do ligi
         foundTeamsById.forEach(team -> team.setLeagueEntity(existingLeague));
+        // Zapisanie drużyn
         teamRepository.saveAll(foundTeamsById);
     }
 
     public void deleteTeamFromLeague(Long leagueId, Set<Long> teamIds) {
+        // Sprawdzenie, czy liga istnieje
+        leagueRepository.findById(leagueId)
+                .orElseThrow(() -> {
+                    log.error("No such league with ID: {}", leagueId);
+                    return new RuntimeException("No such league");
+                });
 
-        var existingLeagueById = leagueRepository.findById(leagueId);
+        // Pobranie drużyn, które są przypisane do danej ligi na podstawie podanych identyfikatorów
+        List<TeamEntity> teamsToRemove = teamRepository.findTeamsByIdsAndInLeague(teamIds, leagueId);
 
-        if (existingLeagueById.isEmpty()) {
-            throw new RuntimeException("No such league");
-        }
-
-        List<TeamEntity> teamsToRemove = teamRepository.findAllById(teamIds);
-
+        // Sprawdzenie, czy żadne drużyny nie zostały znalezione
         if (teamsToRemove.size() != teamIds.size()) {
             Set<Long> foundTeamIds = teamsToRemove.stream()
                     .map(TeamEntity::getId)
                     .collect(Collectors.toSet());
-
             Set<Long> missingTeamIds = new HashSet<>(teamIds);
             missingTeamIds.removeAll(foundTeamIds);
 
-            throw new RuntimeException("Not found a team with id: " + missingTeamIds);
+            log.error("Not all teams found for removal: {}", missingTeamIds);
+            throw new RuntimeException("Not all teams found for removal: " + missingTeamIds);
         }
 
-        teamsToRemove.forEach(team -> {
-            if (team.getLeagueEntity() != null && team.getLeagueEntity().getId().equals(leagueId)) {
-                team.setLeagueEntity(null);
-            }
-        });
-
+        // Usunięcie przypisania drużyn do ligi
+        teamsToRemove.forEach(team -> team.setLeagueEntity(null));
         teamRepository.saveAll(teamsToRemove);
     }
 }
