@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -63,10 +64,15 @@ public class LeagueController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<League>> getAllLeagues(@RequestParam LeagueMode mode) {
+    public ResponseEntity<MappingJacksonValue> getAllLeagues(@RequestParam LeagueMode mode) {
         try {
-            List<League> leagues = leagueService.getAllLeaguesByMode(mode);
-            return ResponseEntity.ok(leagues);
+            var leagueJsons = leagueMapper.convertLeagueToJson(leagueService.getAllLeaguesByMode(mode));
+            MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(leagueJsons);
+            mappingJacksonValue.setSerializationView(switch (mode) {
+                case OFF -> LeagueJson.View.GetResponseShort.class;
+                case COUNT, ALL -> LeagueJson.View.GetResponse.class;
+            });
+            return ResponseEntity.ok(mappingJacksonValue);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(null);
         }

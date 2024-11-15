@@ -23,14 +23,6 @@ public class League {
     @NotEmpty
     private String country;
     private Set<Team> teams;
-    private Long teamCount;
-
-    public League(Long id, String name, String country, Long teamCount) {
-        this.id = id;
-        this.name = name;
-        this.country = country;
-        this.teamCount = teamCount;
-    }
 
     public static class Group {
         public interface Create {}

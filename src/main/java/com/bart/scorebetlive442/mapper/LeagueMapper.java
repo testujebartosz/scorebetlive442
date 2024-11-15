@@ -10,8 +10,10 @@ import java.util.List;
 @Mapper(uses = {TeamMapper.class})
 public interface LeagueMapper {
 
+    @Mapping(target = "teams", ignore = true)
     League convertJsonToLeague(LeagueJson leagueJson);
 
+    @Mapping(target = "teamCount", expression = "java(league.getTeams() != null ? league.getTeams().size() : null)")
     @Mapping(target = "teamDetails", source = "teams")
     LeagueJson convertLeagueToJson(League league);
 

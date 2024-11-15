@@ -1,14 +1,15 @@
 package com.bart.scorebetlive442.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Getter
 @Setter
-@ToString
 @RequiredArgsConstructor
 @Entity
 @Table(name = "league")
@@ -25,10 +26,12 @@ public class LeagueEntity {
     @Column(nullable = false)
     private String country;
 
-    @ToString.Exclude
+//    @ToString.Exclude
 //    @OneToMany
 //    @JoinColumn(name = "league_id")
     @OneToMany(mappedBy = "leagueEntity", orphanRemoval = true)
     private Set<TeamEntity> teams = new LinkedHashSet<>();
+
+
 
 }

@@ -13,9 +13,7 @@ import jakarta.validation.Validator;
 import jakarta.validation.groups.Default;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Example;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -29,20 +27,17 @@ public class LeagueService {
     private final Validator validator;
     private final TeamRepository teamRepository;
     private final EntityManager entityManager;
-    private final JdbcTemplate jdbcTemplate;
 
     public LeagueService(LeagueRepository leagueRepository,
                          LeagueMapper leagueMapper,
                          Validator validator,
                          TeamRepository teamRepository,
-                         EntityManager entityManager,
-                         JdbcTemplate jdbcTemplate) {
+                         EntityManager entityManager) {
         this.leagueRepository = leagueRepository;
         this.leagueMapper = leagueMapper;
         this.validator = validator;
         this.teamRepository = teamRepository;
         this.entityManager = entityManager;
-        this.jdbcTemplate = jdbcTemplate;
     }
 
     //    @Transactional
@@ -64,51 +59,45 @@ public class LeagueService {
 
     public League getLeagueById(Long id) {
         return leagueRepository.getByIdEager(id)
-                .map(leagueMapper::toLeagueModel)
-                .orElseThrow(() -> {
-                    log.error("No such league with ID: {}", id);
-                    return new RuntimeException("No such league");
-                });
+            .map(leagueMapper::toLeagueModel)
+            .orElseThrow(() -> {
+                log.error("No such league with ID: {}", id);
+                return new RuntimeException("No such league");
+            });
     }
-    
+
     public League getLeagueByIdShort(Long id) {
         var byId = leagueRepository.findById(id).get();
         entityManager.detach(byId);
         byId.setTeams(null);
         return Optional.of(byId)
-                .map(leagueMapper::toLeagueModel)
-                .orElseThrow(() -> {
-                    log.error("No such league with ID: {}", id);
-                    return new RuntimeException("No such league");
-                });
+            .map(leagueMapper::toLeagueModel)
+            .orElseThrow(() -> {
+                log.error("No such league with ID: {}", id);
+                return new RuntimeException("No such league");
+            });
     }
 
     public List<League> getAllLeaguesByMode(LeagueMode mode) {
-        return
-                switch (mode) {
-                    case OFF -> {
-                        var allLeagues = leagueRepository.findAllEager();
-                        allLeagues.forEach(entityManager::detach);
-                        allLeagues.forEach(league -> league.setTeams(Collections.emptySet()));
-                        yield allLeagues.stream()
-                                .map(leagueMapper::toLeagueModel)
-                                .collect(Collectors.toList());
-                    }
-                    case COUNT -> leagueRepository.findAllEager()
-                            .stream()
-                            .map(league -> new League(
-                                    league.getId(),
-                                    league.getName(),
-                                    league.getCountry(),
-                                    Collections.emptySet(),
-                                    league.getTeams() != null ? (long) league.getTeams().size() : 0L
-                            ))
-                            .collect(Collectors.toList());
-                    case ALL -> leagueRepository.findAllEager()
-                            .stream()
-                            .map(leagueMapper::toLeagueModel)
-                            .collect(Collectors.toList());
-                };
+        switch (mode) {
+            case OFF -> {
+                var allLeagues = leagueRepository.findAll();
+                allLeagues.forEach(leagueRepository::detach);
+                allLeagues.forEach(league -> league.setTeams(Collections.emptySet()));
+                return allLeagues.stream()
+                    .map(leagueMapper::toLeagueModel)
+                    .collect(Collectors.toList());
+            }
+            case COUNT, ALL -> {
+                return leagueRepository.findAllEager()
+                    .stream()
+                    .map(leagueMapper::toLeagueModel)
+                    .collect(Collectors.toList());
+            }
+            default -> {
+                return List.of();
+            }
+        }
     }
 
     public List<League> getLeagueBy(Optional<String> name, Optional<String> country) {
@@ -130,7 +119,7 @@ public class LeagueService {
 
     public League updateLeague(Long id, League league) {
         LeagueEntity existingLeagueEntity = leagueRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("League not found"));
+            .orElseThrow(() -> new EntityNotFoundException("League not found"));
 
         var validate = validator.validate(league, League.Group.Update.class, Default.class);
         if (!validate.isEmpty()) {
@@ -147,10 +136,10 @@ public class LeagueService {
     public void addTeamToLeague(Long leagueId, Set<Long> teamIds) {
         //sprawdzenie czy liga istnieje
         LeagueEntity existingLeague = leagueRepository.findById(leagueId)
-                .orElseThrow(() -> {
-                    log.error("No such league with ID: {}", leagueId);
-                    return new RuntimeException("No such league");
-                });
+            .orElseThrow(() -> {
+                log.error("No such league with ID: {}", leagueId);
+                return new RuntimeException("No such league");
+            });
 
         // Pobranie drużyn po ich identyfikatorach, które nie są przypisane do tej ligi
         List<TeamEntity> foundTeamsById = teamRepository.findTeamsByIdsAndNotInLeague(teamIds, leagueId);
@@ -158,9 +147,9 @@ public class LeagueService {
         // Sprawdzenie, czy wszystkie drużyny zostały znalezione
         if (foundTeamsById.size() != teamIds.size()) {
             Set<Long> foundTeamsIds = foundTeamsById
-                    .stream()
-                    .map(TeamEntity::getId)
-                    .collect(Collectors.toSet());
+                .stream()
+                .map(TeamEntity::getId)
+                .collect(Collectors.toSet());
             Set<Long> missingTeamIds = new HashSet<>(teamIds);
             missingTeamIds.removeAll(foundTeamsIds);
 
@@ -177,10 +166,10 @@ public class LeagueService {
     public void deleteTeamFromLeague(Long leagueId, Set<Long> teamIds) {
         // Sprawdzenie, czy liga istnieje
         leagueRepository.findById(leagueId)
-                .orElseThrow(() -> {
-                    log.error("No such league with ID: {}", leagueId);
-                    return new RuntimeException("No such league");
-                });
+            .orElseThrow(() -> {
+                log.error("No such league with ID: {}", leagueId);
+                return new RuntimeException("No such league");
+            });
 
         // Pobranie drużyn, które są przypisane do danej ligi na podstawie podanych identyfikatorów
         List<TeamEntity> teamsToRemove = teamRepository.findTeamsByIdsAndInLeague(teamIds, leagueId);
@@ -188,8 +177,8 @@ public class LeagueService {
         // Sprawdzenie, czy żadne drużyny nie zostały znalezione
         if (teamsToRemove.size() != teamIds.size()) {
             Set<Long> foundTeamIds = teamsToRemove.stream()
-                    .map(TeamEntity::getId)
-                    .collect(Collectors.toSet());
+                .map(TeamEntity::getId)
+                .collect(Collectors.toSet());
             Set<Long> missingTeamIds = new HashSet<>(teamIds);
             missingTeamIds.removeAll(foundTeamIds);
 

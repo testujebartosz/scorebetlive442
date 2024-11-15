@@ -41,20 +41,25 @@ public class DevDataUtils {
         leagueEntity3 = leagueRepository.save(leagueEntity3);
         log.debug("Created League: {}", leagueEntity3);
 
-        var teamEntity = teamRepository.save(addTeam("Man Utd", "England", "Manchster", "1942-02-09"));
+        var teamEntity = teamRepository.save(addTeam("Man Utd", "England", "Manchster", "1942-02-09", leagueEntity));
         log.debug("Created Team: {}", teamEntity);
-        teamEntity = teamRepository.save(addTeam("Arsenal", "England", "London", "1999-02-09"));
+
+        teamEntity = teamRepository.save(addTeam("Arsenal", "England", "London", "1999-02-09", leagueEntity));
         log.debug("Created Team: {}", teamEntity);
-        teamEntity = teamRepository.save(addTeam("FKS Stal Mielec", "Poland", "Mielec", "1939-04-10"));
+
+        teamEntity = teamRepository.save(addTeam("FKS Stal Mielec", "Poland", "Mielec", "1939-04-10", null));
         log.debug("Created Team: {}", teamEntity);
+
+
     }
 
-    private TeamEntity addTeam(String name, String country, String city, String year) {
+    private TeamEntity addTeam(String name, String country, String city, String year, LeagueEntity leagueEntity) {
         var teamEntity = new TeamEntity();
         teamEntity.setName(name);
         teamEntity.setCountry(country);
         teamEntity.setCity(city);
         teamEntity.setFoundedYear(year);
+        teamEntity.setLeagueEntity(leagueEntity);
         return teamEntity;
     }
 }
