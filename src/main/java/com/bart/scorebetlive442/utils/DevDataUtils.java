@@ -35,6 +35,12 @@ public class DevDataUtils {
         leagueEntity2 = leagueRepository.save(leagueEntity2);
         log.debug("Created League: {}", leagueEntity2);
 
+        var leagueEntity3 = new LeagueEntity();
+        leagueEntity3.setName("Primera Division");
+        leagueEntity3.setCountry("Spain");
+        leagueEntity3 = leagueRepository.save(leagueEntity3);
+        log.debug("Created League: {}", leagueEntity3);
+
         var teamEntity = teamRepository.save(addTeam("Man Utd", "England", "Manchster", "1942-02-09"));
         log.debug("Created Team: {}", teamEntity);
         teamEntity = teamRepository.save(addTeam("Arsenal", "England", "London", "1999-02-09"));

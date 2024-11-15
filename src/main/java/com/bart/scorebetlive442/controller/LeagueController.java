@@ -4,6 +4,7 @@ import com.bart.scorebetlive442.mapper.LeagueMapper;
 import com.bart.scorebetlive442.model.League;
 import com.bart.scorebetlive442.model.json.AddTeamToLeagueJson;
 import com.bart.scorebetlive442.model.json.LeagueJson;
+import com.bart.scorebetlive442.model.json.LeagueMode;
 import com.bart.scorebetlive442.model.json.ModifyTeamsInLeagueAction;
 import com.bart.scorebetlive442.service.LeagueService;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -59,6 +60,16 @@ public class LeagueController {
         League league = leagueService.getLeagueByIdShort(id);
         LeagueJson leagueJson = leagueMapper.convertLeagueToJson(league);
         return new ResponseEntity<>(leagueJson, HttpStatus.OK);
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<League>> getAllLeagues(@RequestParam LeagueMode mode) {
+        try {
+            List<League> leagues = leagueService.getAllLeaguesByMode(mode);
+            return ResponseEntity.ok(leagues);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(null);
+        }
     }
 
     @PatchMapping(value = "/{id}")

@@ -22,7 +22,6 @@ public class Team {
     private String city;
     private String country;
     private String foundedYear;
-    private League league;
 
     public static class Group {
         public interface Create {}

@@ -1,10 +1,7 @@
 package com.bart.scorebetlive442.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.LinkedHashSet;
 import java.util.Set;

@@ -16,7 +16,24 @@ public interface LeagueRepository extends JpaRepository<LeagueEntity, Long> {
 
     @Query("SELECT l FROM LeagueEntity l JOIN FETCH l.teams t WHERE l.id = :id")
     Optional<LeagueEntity> getByIdEager(Long id);
+
     List<LeagueEntity> findAllByCountry(String country);
+
+    @Query("SELECT l FROM LeagueEntity l")
+    List<LeagueEntity> findAllWithoutTeams();
+
+    @Query("SELECT DISTINCT l FROM LeagueEntity l LEFT JOIN FETCH l.teams")
+    List<LeagueEntity> findAllEager();
+
+    @Query("""
+    SELECT l.id AS leagueId, l.name AS leagueName, l.country AS leagueCountry, 
+           COUNT(t.id) AS teamCount
+    FROM LeagueEntity l 
+    LEFT JOIN l.teams t 
+    GROUP BY l.id, l.name, l.country
+    """)
+    List<Object[]> findAllWithTeamCount();
+
 
     default List<LeagueEntity> findAllFromPoland() {
         return findAllByCountry("Poland");

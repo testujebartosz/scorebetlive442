@@ -4,6 +4,7 @@ import com.bart.scorebetlive442.entity.LeagueEntity;
 import com.bart.scorebetlive442.entity.TeamEntity;
 import com.bart.scorebetlive442.mapper.LeagueMapper;
 import com.bart.scorebetlive442.model.League;
+import com.bart.scorebetlive442.model.json.LeagueMode;
 import com.bart.scorebetlive442.repository.LeagueRepository;
 import com.bart.scorebetlive442.repository.TeamRepository;
 import jakarta.persistence.EntityManager;
@@ -14,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Example;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -64,20 +66,49 @@ public class LeagueService {
         return leagueRepository.getByIdEager(id)
                 .map(leagueMapper::toLeagueModel)
                 .orElseThrow(() -> {
-            log.error("No such league with ID: {}", id);
-            return new RuntimeException("No such league");
-        });
+                    log.error("No such league with ID: {}", id);
+                    return new RuntimeException("No such league");
+                });
     }
-
+    
     public League getLeagueByIdShort(Long id) {
         var byId = leagueRepository.findById(id).get();
         entityManager.detach(byId);
+        byId.setTeams(null);
         return Optional.of(byId)
                 .map(leagueMapper::toLeagueModel)
                 .orElseThrow(() -> {
                     log.error("No such league with ID: {}", id);
                     return new RuntimeException("No such league");
                 });
+    }
+
+    public List<League> getAllLeaguesByMode(LeagueMode mode) {
+        return
+                switch (mode) {
+                    case OFF -> {
+                        var allLeagues = leagueRepository.findAllEager();
+                        allLeagues.forEach(entityManager::detach);
+                        allLeagues.forEach(league -> league.setTeams(Collections.emptySet()));
+                        yield allLeagues.stream()
+                                .map(leagueMapper::toLeagueModel)
+                                .collect(Collectors.toList());
+                    }
+                    case COUNT -> leagueRepository.findAllEager()
+                            .stream()
+                            .map(league -> new League(
+                                    league.getId(),
+                                    league.getName(),
+                                    league.getCountry(),
+                                    Collections.emptySet(),
+                                    league.getTeams() != null ? (long) league.getTeams().size() : 0L
+                            ))
+                            .collect(Collectors.toList());
+                    case ALL -> leagueRepository.findAllEager()
+                            .stream()
+                            .map(leagueMapper::toLeagueModel)
+                            .collect(Collectors.toList());
+                };
     }
 
     public List<League> getLeagueBy(Optional<String> name, Optional<String> country) {
