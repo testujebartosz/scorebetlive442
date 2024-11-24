@@ -88,7 +88,7 @@ public class LeagueService {
                     .map(leagueMapper::toLeagueModel)
                     .collect(Collectors.toList());
             }
-            case COUNT, ALL -> {
+            case ALL, COUNT -> {
                 return leagueRepository.findAllEager()
                     .stream()
                     .map(leagueMapper::toLeagueModel)
