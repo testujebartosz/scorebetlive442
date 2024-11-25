@@ -40,19 +40,13 @@ public class LeagueService {
         this.entityManager = entityManager;
     }
 
-    //    @Transactional
     public League createLeague(League league) {
         var validate = validator.validate(league, League.Group.Create.class, Default.class);
         if (!validate.isEmpty()) {
             System.out.println(validate);
             throw new RuntimeException("Validation failed");
         }
-//        Set<TeamEntity> teams = league.getTeams()
-//                .stream()
-//                .map(team -> teamService.findTeamEntityById(team.getId()))
-//                .collect(Collectors.toSet());
         LeagueEntity leagueEntity = leagueMapper.toLeagueEntity(league);
-//        leagueEntity.setTeams(teams);
         LeagueEntity saved = leagueRepository.save(leagueEntity);
         return leagueMapper.toLeagueModel(saved);
     }
