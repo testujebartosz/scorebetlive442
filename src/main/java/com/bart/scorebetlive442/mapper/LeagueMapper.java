@@ -24,8 +24,7 @@ public interface LeagueMapper {
     List<League> toLeagueModel(List<LeagueEntity> leagueEntities);
 
     LeagueEntity toLeagueEntity(League league);
-
-
+    
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
     void updateLeagueFromDto(League source, @MappingTarget LeagueEntity target);
