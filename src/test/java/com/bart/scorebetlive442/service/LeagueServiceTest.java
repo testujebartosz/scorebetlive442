@@ -21,6 +21,8 @@ class LeagueServiceTest {
 
     @Mock
     private LeagueRepository leagueRepository;
+
+    @Mock
     private LeagueMapper leagueMapper;
 
     @InjectMocks
