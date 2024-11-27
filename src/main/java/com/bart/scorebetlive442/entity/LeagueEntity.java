@@ -26,9 +26,6 @@ public class LeagueEntity {
     @Column(nullable = false)
     private String country;
 
-//    @ToString.Exclude
-//    @OneToMany
-//    @JoinColumn(name = "league_id")
     @OneToMany(mappedBy = "leagueEntity", orphanRemoval = true)
     private Set<TeamEntity> teams = new LinkedHashSet<>();
 

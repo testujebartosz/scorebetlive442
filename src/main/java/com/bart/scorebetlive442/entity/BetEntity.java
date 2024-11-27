@@ -1,6 +1,5 @@
 package com.bart.scorebetlive442.entity;
 
-import com.bart.scorebetlive442.model.Team;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

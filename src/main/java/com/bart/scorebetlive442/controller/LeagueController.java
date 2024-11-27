@@ -66,11 +66,13 @@ public class LeagueController {
     @GetMapping("/all")
     public ResponseEntity<MappingJacksonValue> getAllLeagues(@RequestParam LeagueMode mode) {
         try {
-            var leagueJsons = leagueMapper.convertLeagueToJson(leagueService.getAllLeaguesByMode(mode));
+            var leagueModels = leagueService.getAllLeaguesByMode(mode);
+            var leagueJsons = leagueMapper.convertLeagueToJson(leagueModels);
             MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(leagueJsons);
             mappingJacksonValue.setSerializationView(switch (mode) {
                 case OFF -> LeagueJson.View.GetResponseShort.class;
-                case COUNT, ALL -> LeagueJson.View.GetResponse.class;
+                case ALL -> LeagueJson.View.GetResponse.class;
+                case COUNT -> LeagueJson.View.GetResponseCountTeams.class;
             });
             return ResponseEntity.ok(mappingJacksonValue);
         } catch (IllegalArgumentException e) {

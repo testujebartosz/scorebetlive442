@@ -15,6 +15,7 @@ public record LeagueJson(
         String country,
         @JsonView({GetResponse.class})
         Set<TeamJson> teamDetails,
+        @JsonView({GetResponseCountTeams.class})
         Integer teamCount
 ) {
 
@@ -23,5 +24,6 @@ public record LeagueJson(
         public record CreateResponse() {}
         public static class GetResponse extends TeamJson.View.GetResponse {}
         public static class GetResponseShort {}
+        public static class GetResponseCountTeams extends GetResponseShort {}
     }
 }

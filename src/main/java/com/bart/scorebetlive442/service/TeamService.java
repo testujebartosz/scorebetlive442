@@ -2,7 +2,6 @@ package com.bart.scorebetlive442.service;
 
 import com.bart.scorebetlive442.entity.TeamEntity;
 import com.bart.scorebetlive442.mapper.TeamMapper;
-import com.bart.scorebetlive442.model.Match;
 import com.bart.scorebetlive442.model.Team;
 import com.bart.scorebetlive442.repository.TeamRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -43,11 +42,6 @@ public class TeamService {
        return teamRepository.findById(id)
                .map(teamMapper::toTeamModel)
                .orElse(null);
-    }
-
-    public TeamEntity findTeamEntityById(Long id) {
-        return teamRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Team not found with ID: " + id));
     }
 
     public List<Team> getAllTeams() {
