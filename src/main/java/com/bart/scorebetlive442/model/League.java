@@ -14,7 +14,6 @@ import java.util.Set;
 @NoArgsConstructor
 @ToString
 public class League {
-
     @Null(groups = {Group.Create.class, Group.Update.class})
     private Long id;
     @NotEmpty
@@ -27,5 +26,20 @@ public class League {
     public static class Group {
         public interface Create {}
         public interface Update {}
+    }
+
+    public String hi() {
+        return name;
+    }
+
+    public String upperCase(String str, String str2) {
+        // odpytanie do bazy danych
+        return str.toUpperCase() + str2.toUpperCase();
+    }
+
+    public void doSmth() {
+        // odpytanie do bazy danych
+        //
+        //
     }
 }

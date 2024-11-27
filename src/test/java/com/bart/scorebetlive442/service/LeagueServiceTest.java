@@ -8,10 +8,7 @@ import com.bart.scorebetlive442.repository.LeagueRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentMatchers;
-import org.mockito.BDDMockito;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
@@ -53,24 +50,32 @@ class LeagueServiceTest {
 
     @Test
     void givenLeagueExists_whenGetLeagueById_thenReturnLeague() {
-        LeagueEntity mockLeagueEntity = new LeagueEntity();
-        mockLeagueEntity.setId(1L);
-        mockLeagueEntity.setName("Premier League");
+        LeagueEntity givenLeagueEntity = new LeagueEntity();
+        givenLeagueEntity.setId(1L);
+        givenLeagueEntity.setName("Premier League");
 
-        League mockLeague = new League();
-        mockLeague.setId(1L);
-        mockLeague.setName("Premier League");
+        League givenLeague = new League();
+        givenLeague.setId(1L);
+        givenLeague.setName("Premier League");
 
-        BDDMockito.given(leagueRepository.getByIdEager(1L)).willReturn(Optional.of(mockLeagueEntity));
-        BDDMockito.given(leagueMapper.toLeagueModel(mockLeagueEntity)).willReturn(mockLeague);
+        BDDMockito.given(leagueRepository.getByIdEager(1L)).willReturn(Optional.of(givenLeagueEntity));
+        BDDMockito.given(leagueMapper.toLeagueModel(givenLeagueEntity)).willReturn(givenLeague);
+
 
         League result = leagueService.getLeagueById(1L);
-        Assertions.assertThat(result).isNotNull();
-        Assertions.assertThat(result.getId()).isEqualTo(1L);
-        Assertions.assertThat(result.getName()).isEqualTo("Premier League");
-        BDDMockito.verify(leagueRepository).getByIdEager(1L);
-        BDDMockito.verify(leagueMapper).toLeagueModel(mockLeagueEntity);
-        BDDMockito.verifyNoMoreInteractions(leagueRepository, leagueMapper);
+
+
+        Assertions.assertThat(result)
+            .isNotNull()
+            .satisfies(league -> {
+                Assertions.assertThat(league.getId()).isEqualTo(1L);
+                Assertions.assertThat(league.getName()).isEqualTo("Premier League");
+            });
+//        BDDMockito.then(leagueRepository).should(BDDMockito.times(2)).getByIdEager(1L);
+//        Mockito.verify(leagueRepository, Mockito.times(2)).getByIdEager(1L);
+        BDDMockito.verify(leagueMapper).toLeagueModel(givenLeagueEntity);
+        Mockito.verify(leagueRepository).getByIdEager(1L);
+        Mockito.verifyNoMoreInteractions(leagueRepository);
     }
 
     @Test

@@ -40,6 +40,10 @@ public class LeagueService {
         this.entityManager = entityManager;
     }
 
+    public String hi() {
+        return "abc";
+    }
+
     public League createLeague(League league) {
         var validate = validator.validate(league, League.Group.Create.class, Default.class);
         if (!validate.isEmpty()) {
