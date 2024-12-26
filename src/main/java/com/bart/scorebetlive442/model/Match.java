@@ -23,7 +23,6 @@ public class Match {
     @Length(min = 3, max = 40)
     private String stadiumName;
     private String city;
-    private Score score;
 
     public static class Group {
         public interface Create {}
