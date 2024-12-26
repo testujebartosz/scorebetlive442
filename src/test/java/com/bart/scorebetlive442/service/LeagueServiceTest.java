@@ -4,6 +4,7 @@ import com.bart.scorebetlive442.entity.LeagueEntity;
 import com.bart.scorebetlive442.mapper.LeagueMapper;
 import com.bart.scorebetlive442.model.League;
 import com.bart.scorebetlive442.repository.LeagueRepository;
+import jakarta.persistence.EntityManager;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import jakarta.validation.groups.Default;
@@ -30,6 +31,9 @@ class LeagueServiceTest {
 
     @Mock
     private Validator validator;
+
+    @Mock
+    EntityManager entityManager;
 
     @InjectMocks
     private LeagueService leagueService;
@@ -154,5 +158,58 @@ class LeagueServiceTest {
 
         BDDMockito.verify(validator).validate(givenLeague, League.Group.Create.class, Default.class);
         BDDMockito.verifyNoMoreInteractions(validator);
+    }
+
+    @Test
+    void givenValidLeagueId_whenGetLeagueByIdShort_thenReturnLeague() {
+        Long leagueId = 1L;
+
+        LeagueEntity givenLeagueEntity = new LeagueEntity();
+        givenLeagueEntity.setId(1L);
+        givenLeagueEntity.setName("Premier League");
+        givenLeagueEntity.setCountry("England");
+
+        BDDMockito.given(leagueRepository.findById(leagueId))
+                .willReturn(Optional.of(givenLeagueEntity));
+
+        League givenLeague = new League();
+        givenLeague.setId(1L);
+        givenLeague.setName("Premier League");
+        givenLeague.setCountry("England");
+
+        BDDMockito.given(leagueMapper.toLeagueModel(givenLeagueEntity)).willReturn(givenLeague);
+        BDDMockito.doNothing().when(entityManager).detach(givenLeagueEntity);
+
+        League result = leagueService.getLeagueByIdShort(leagueId);
+
+        Assertions.assertThat(result)
+                .isNotNull()
+                .satisfies(league -> {
+                    Assertions.assertThat(league.getId()).isEqualTo(1L);
+                    Assertions.assertThat(league.getName()).isEqualTo("Premier League");
+                    Assertions.assertThat(league.getCountry()).isEqualTo("England");
+                });
+
+        BDDMockito.verify(leagueRepository).findById(leagueId);
+        BDDMockito.verify(leagueMapper).toLeagueModel(givenLeagueEntity);
+        BDDMockito.verifyNoMoreInteractions(leagueRepository, leagueMapper);
+    }
+
+    @Test
+    void givenInvalidLeagueId_whenGetLeagueByIdShort_thenThrowException() {
+        // Given
+        Long invalidLeagueId = 999L;
+
+        // Mockowanie repozytorium, aby zwróciło Optional.empty() (czyli brak wyniku)
+        BDDMockito.given(leagueRepository.findById(invalidLeagueId))
+                .willReturn(Optional.empty());
+
+        // When & Then
+        Throwable thrown = Assertions.catchThrowable(() -> leagueService.getLeagueByIdShort(invalidLeagueId));
+
+        // Oczekujemy, że zostanie rzucony wyjątek RuntimeException z odpowiednim komunikatem
+        Assertions.assertThat(thrown)
+                .isInstanceOf(RuntimeException.class)
+                .hasMessage("No such league");
     }
 }

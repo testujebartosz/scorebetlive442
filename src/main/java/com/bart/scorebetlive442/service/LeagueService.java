@@ -61,16 +61,16 @@ public class LeagueService {
     }
 
     public League getLeagueByIdShort(Long id) {
-        var byId = leagueRepository.findById(id).get();
+        var byId = leagueRepository.findById(id)
+                .orElseThrow(() -> {
+                    log.error("No such league with ID: {}", id);
+                    return new RuntimeException("No such league");
+                });
         entityManager.detach(byId);
         byId.setTeams(null);
-        return Optional.of(byId)
-            .map(leagueMapper::toLeagueModel)
-            .orElseThrow(() -> {
-                log.error("No such league with ID: {}", id);
-                return new RuntimeException("No such league");
-            });
+        return leagueMapper.toLeagueModel(byId);
     }
+
 
     public List<League> getAllLeaguesByMode(LeagueMode mode) {
         switch (mode) {
