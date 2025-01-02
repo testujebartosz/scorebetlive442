@@ -16,9 +16,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
-
-import static org.mockito.Mockito.mock;
 
 @ExtendWith(MockitoExtension.class)
 class LeagueServiceTest {
@@ -148,9 +145,12 @@ class LeagueServiceTest {
         givenLeague.setName(" ");
         givenLeague.setCountry(" ");
 
-        Set<ConstraintViolation<League>> violations = new HashSet<>();
-        violations.add(mock(ConstraintViolation.class));
-        BDDMockito.given(validator.validate(givenLeague, League.Group.Create.class, Default.class)).willReturn(violations);
+//        Set<ConstraintViolation<League>> violations = new HashSet<>();
+        var spy = BDDMockito.spy(new HashSet<ConstraintViolation<League>>());
+        BDDMockito.given(spy.isEmpty()).willReturn(false);
+//
+//        violations.add(mock(ConstraintViolation.class));
+        BDDMockito.given(validator.validate(givenLeague, League.Group.Create.class, Default.class)).willReturn(spy);
 
         Assertions.assertThatThrownBy(() -> leagueService.createLeague(givenLeague))
                 .isInstanceOf(RuntimeException.class)

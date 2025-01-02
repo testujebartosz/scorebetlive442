@@ -1,16 +1,12 @@
 package com.bart.scorebetlive442.model;
 
 import jakarta.validation.constraints.Null;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.validator.constraints.Length;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class Match {
@@ -19,10 +15,12 @@ public class Match {
     private Long id;
     private Team teamHome;
     private Team teamAway;
-    private Date dateTime;
+    private LocalDateTime matchTime;
     @Length(min = 3, max = 40)
     private String stadiumName;
     private String city;
+    private Integer scoreHome;
+    private Integer scoreAway;
 
     public static class Group {
         public interface Create {}

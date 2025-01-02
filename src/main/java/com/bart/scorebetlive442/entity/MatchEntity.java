@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -21,20 +21,24 @@ public class MatchEntity {
     @Column(nullable = false, updatable = false)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "team_home_id", nullable = false)
     private TeamEntity teamHome;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "team_away_id", nullable = false)
     private TeamEntity teamAway;
 
     @Column(nullable = false)
-    private Date dateTime;
+    private LocalDateTime matchTime;
 
     @Column(nullable = false)
     private String stadiumName;
 
     @Column(nullable = false)
     private String city;
+
+    private Long scoreHome;
+
+    private Long scoreAway;
 }

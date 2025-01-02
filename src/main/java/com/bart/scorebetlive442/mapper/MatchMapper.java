@@ -14,6 +14,10 @@ public interface MatchMapper {
 
     Match toMatchModel(MatchEntity matchEntity);
 
+//    @Mapping(target = "teamHome", expression = "java(matchEntity.getTeamHome())")
+//    @Mapping(target = "teamAway", expression = "java(matchEntity.getTeamAway())")
+//    Match toMatchModelEnriched(MatchEntity matchEntity, TeamEntity homeTeam, TeamEntity awayTeam);
+
     MatchEntity toMatchEntity(Match match);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

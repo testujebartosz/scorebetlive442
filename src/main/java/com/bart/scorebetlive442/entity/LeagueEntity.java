@@ -28,7 +28,4 @@ public class LeagueEntity {
 
     @OneToMany(mappedBy = "leagueEntity", orphanRemoval = true)
     private Set<TeamEntity> teams = new LinkedHashSet<>();
-
-
-
 }

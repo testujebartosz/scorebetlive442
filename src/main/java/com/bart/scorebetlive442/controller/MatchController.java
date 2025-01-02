@@ -28,8 +28,8 @@ public class MatchController {
     }
 
     @PostMapping
-    @JsonView(MatchJson.View.CreateResponse.class)
-    public ResponseEntity<MatchJson> createTeam(@RequestBody @JsonView(MatchJson.View.CreateRequest.class)
+//    @JsonView(MatchJson.View.CreateResponse.class)
+    public ResponseEntity<MatchJson> createMatch(@RequestBody //@JsonView(MatchJson.View.CreateRequest.class)
                                                     MatchJson matchJson) {
 
         Match createdMatch = matchService.createMatch(matchMapper.convertJsonToMatch(matchJson));
@@ -38,7 +38,7 @@ public class MatchController {
 
 
     @GetMapping(value = "/{id}")
-    @JsonView(MatchJson.View.GetResponse.class)
+//    @JsonView(MatchJson.View.GetResponse.class)
     public ResponseEntity<MatchJson> getTeam(@PathVariable(name = "id") Long matchId) {
         Match match = matchService.getMatch(matchId);
 
@@ -64,16 +64,19 @@ public class MatchController {
         }
     }
 
+    // updateScore - wlasny modelJson
+
     @PatchMapping(value = "/{id}")
     @JsonView(LeagueJson.View.GetResponse.class)
-    public ResponseEntity<MatchJson> updateTeam(@PathVariable Long id, @RequestBody @JsonView(MatchJson.View.CreateRequest.class)
+    public ResponseEntity<MatchJson> updateMatch(@PathVariable Long id, @RequestBody @JsonView(MatchJson.View.CreateRequest.class)
     MatchJson matchJson) {
         Match updatedMatch = matchService.updateMatch(id, matchMapper.convertJsonToMatch(matchJson));
         return new ResponseEntity<>(matchMapper.convertMatchToJson(updatedMatch), HttpStatus.OK);
     }
 
+    // soft-delete
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<Void> deleteTeam(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteMatch(@PathVariable Long id) {
         boolean isMatchRemoved = matchService.removeMatchById(id);
         if (isMatchRemoved) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
