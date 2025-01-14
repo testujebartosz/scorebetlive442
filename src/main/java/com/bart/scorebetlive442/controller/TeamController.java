@@ -5,6 +5,7 @@ import com.bart.scorebetlive442.model.Team;
 import com.bart.scorebetlive442.model.json.TeamJson;
 import com.bart.scorebetlive442.service.TeamService;
 import com.fasterxml.jackson.annotation.JsonView;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,6 +43,19 @@ public class TeamController {
             return new ResponseEntity<>(teamMapper.convertTeamToJson(team), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PostMapping(value = "/example")
+    @JsonView(TeamJson.View.GetResponse.class)
+    public ResponseEntity<?> getTeamsByExample(@RequestBody TeamJson exampleTeam) {
+        var team = teamMapper.convertJsonToTeam(exampleTeam);
+        val result = teamService.getTeamByExample(team).stream().map(teamMapper::convertTeamToJson).collect(Collectors.toList());
+
+        if (result.size() == 1) {
+            return new ResponseEntity<>(result.get(0), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(result, HttpStatus.OK);
         }
     }
 

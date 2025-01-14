@@ -17,4 +17,10 @@ public interface LeagueRepository extends JpaRepository<LeagueEntity, Long>, Det
     @Query("SELECT DISTINCT l FROM LeagueEntity l LEFT JOIN FETCH l.teams")
     List<LeagueEntity> findAllEager();
 
+    List<LeagueEntity> getLeagueEntityByNameIsNot(String name);
+
+    default List<LeagueEntity> findAllLive() {
+        return getLeagueEntityByNameIsNot("DELETED");
+    }
+
 }

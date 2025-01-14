@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -13,6 +15,8 @@ import java.util.Set;
 @RequiredArgsConstructor
 @Entity
 @Table(name = "league")
+@SQLDelete(sql = "UPDATE league SET name = 'DELETED' WHERE id = ?")
+@SQLRestriction(value = "name <> 'DELETED'")
 public class LeagueEntity {
 
     @Id
