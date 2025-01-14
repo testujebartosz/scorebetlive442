@@ -8,6 +8,7 @@ import com.bart.scorebetlive442.model.json.LeagueMode;
 import com.bart.scorebetlive442.model.json.ModifyTeamsInLeagueAction;
 import com.bart.scorebetlive442.service.LeagueService;
 import com.fasterxml.jackson.annotation.JsonView;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,6 +34,7 @@ public class LeagueController {
 
     @PostMapping
     @JsonView(LeagueJson.View.CreateResponse.class)
+    @Operation(description = "test")
     public ResponseEntity<LeagueJson> createLeague(@RequestBody @JsonView(LeagueJson.View.CreateRequest.class)
                                                    LeagueJson leagueJson) {
         League createdLeague = leagueService.createLeague(leagueMapper.convertJsonToLeague(leagueJson));
